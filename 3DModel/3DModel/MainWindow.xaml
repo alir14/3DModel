@@ -6,11 +6,11 @@
         xmlns:helix="http://helix-toolkit.org/wpf"
         xmlns:local="clr-namespace:_3DModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="734" Width="1024">
+        Title="MainWindow" Height="800" Width="1500">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="70*" />
-            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition Width="75*" />
+            <ColumnDefinition Width="25*"/>
         </Grid.ColumnDefinitions>
 
         <helix:HelixViewport3D x:Name="viewer" ZoomExtentsWhenLoaded="True" Grid.Column="0" 

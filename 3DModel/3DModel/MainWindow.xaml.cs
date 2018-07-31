@@ -1,22 +1,23 @@
-﻿using HelixToolkit.Wpf;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using Microsoft.Win32;
+using HelixToolkit.Wpf;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using HelixToolkit.Wpf.SharpDX;
+using System.Windows.Documents;
+using System.Windows.Navigation;
+using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Collections.ObjectModel;
+using System.Windows.Controls.Primitives;
 
 namespace _3DModel
 {
@@ -26,7 +27,14 @@ namespace _3DModel
     public partial class MainWindow : Window
     {
         ModelVisual3D device3D;
+        private Element3DCollection model;
+        private Dictionary<MeshGeometryModel3D, IFCItem> _meshToIfcItems = null;
+        private IFCItem _hoverIfcItem = null;
+        private IFCItem _selectedIfcItem = null;
+
         Popup loadPopup = new Popup();
+
+        private IFCItem _rootIfcItem = null;
 
         public ObservableCollection<Sticker> UserStickers { get; set; }
 
@@ -47,9 +55,9 @@ namespace _3DModel
             viewer.ZoomExtents();
         }
 
-        private Model3D DisplayDesign(string modelPath)
+        private System.Windows.Media.Media3D.Model3D DisplayDesign(string modelPath)
         {
-            Model3D device = null;
+            System.Windows.Media.Media3D.Model3D device = null;
 
             try
             {
@@ -70,12 +78,7 @@ namespace _3DModel
 
         private void BtnLoad_Click(object sender, RoutedEventArgs e)
         {
-            device3D = new ModelVisual3D
-            {
-                Content = DisplayDesign(txtModelPath.Text)
-            };
 
-            viewer.Children.Add(device3D);
         }
 
         private void BtnBrows_Click(object sender, RoutedEventArgs e)
@@ -214,6 +217,26 @@ namespace _3DModel
         private void btnLoadPopUpClose_Click1(object sender, RoutedEventArgs e)
         {
             loadPopup.IsOpen = false;
+        }
+
+        private void Load3DModel(string filePath)
+        {
+            device3D = new ModelVisual3D
+            {
+                Content = DisplayDesign(filePath)
+            };
+
+            viewer.Children.Add(device3D);
+        }
+
+        private void Reset()
+        {
+
+        }
+
+        private void LoadIFCFile(string filePath)
+        {
+            Reset();
         }
     }
 }
