@@ -18,6 +18,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Collections.ObjectModel;
 using System.Windows.Controls.Primitives;
+using _3DModel.Managers;
+using _3DModel.IFCFileReader;
+using IfcEngineCS;
 
 namespace _3DModel
 {
@@ -27,14 +30,14 @@ namespace _3DModel
     public partial class MainWindow : Window
     {
         ModelVisual3D device3D;
-        private Element3DCollection model;
-        private Dictionary<MeshGeometryModel3D, IFCItem> _meshToIfcItems = null;
-        private IFCItem _hoverIfcItem = null;
-        private IFCItem _selectedIfcItem = null;
+        //private Element3DCollection model;
+        //private Dictionary<MeshGeometryModel3D, IFCItem> _meshToIfcItems = null;
+        //private IFCItem _hoverIfcItem = null;
+        //private IFCItem _selectedIfcItem = null;
 
         Popup loadPopup = new Popup();
 
-        private IFCItem _rootIfcItem = null;
+        //private IFCItem _rootIfcItem = null;
 
         public ObservableCollection<Sticker> UserStickers { get; set; }
 
@@ -78,7 +81,7 @@ namespace _3DModel
 
         private void BtnLoad_Click(object sender, RoutedEventArgs e)
         {
-
+            LoadIFCFile(txtModelPath.Text);
         }
 
         private void BtnBrows_Click(object sender, RoutedEventArgs e)
@@ -237,6 +240,22 @@ namespace _3DModel
         private void LoadIFCFile(string filePath)
         {
             Reset();
+            var type = HelperManager.Instance.GetIfcType(filePath);
+
+            switch(type)
+            {
+                case IFCType.IFC2:
+                    var ifc2 = new IFC2FileReader(new IfcEngine(), filePath);
+                    ifc2.ParsIFCFile();
+                    break;
+                case IFCType.IFC4:
+                    var ifc4 = new IFC4FileReader(new IfcEngine(), filePath);
+                    ifc4.ParsIFCFile();
+                    break;
+                default:
+                    break;
+
+            }
         }
     }
 }

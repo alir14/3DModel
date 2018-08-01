@@ -9,18 +9,16 @@ using System.Xml;
 
 namespace _3DModel.Managers
 {
-    public class FileReaderManager
+    public class HelperManager
     {
-        private readonly IfcEngine ifcEngine = new IfcEngine();
-        const string IFC2X3_SCHEMA_NAME = "IFC2X3_TC1.exp";
-        const string XML_SETTINGS_IFC2x3 = @"IFC2X3-Settings.xml";
-        const string XML_SETTINGS_IFC4 = @"IFC4-Settings.xml";
+        readonly IfcEngine ifcEngine = new IfcEngine();
+
         #region singltone
 
-        private static FileReaderManager instance = null;
+        private static HelperManager instance = null;
         private static readonly object processLock = new object();
 
-        private FileReaderManager Instance
+        public static HelperManager Instance
         {
             get
             {
@@ -30,7 +28,7 @@ namespace _3DModel.Managers
                     {
                         if (instance == null)
                         {
-                            instance = new FileReaderManager();
+                            instance = new HelperManager();
                         }
                     }
                 }

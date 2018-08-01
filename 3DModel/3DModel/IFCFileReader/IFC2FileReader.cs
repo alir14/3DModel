@@ -14,14 +14,14 @@ namespace _3DModel.IFCFileReader
         public IFC2FileReader(IfcEngine engine, string path)
             :base(engine,path)
         {
-            this.path = path;
+            this.Path = path;
         }
 
-        protected override void ParsIFCFile()
+        public override void ParsIFCFile()
         {
-            IntPtr ifcModel = IfcEngine.OpenModelUnicode(IntPtr.Zero, path, Constants.IFC2X3_SCHEMA_NAME);
+            base.IfcModel = IfcEngine.OpenModelUnicode(IntPtr.Zero, Path, Constants.IFC2X3_SCHEMA_NAME);
 
-            if (ifcModel != IntPtr.Zero)
+            if (base.IfcModel != IntPtr.Zero)
             {
                 var textReader = new XmlTextReader(Constants.XML_SETTINGS_IFC2x3);
 

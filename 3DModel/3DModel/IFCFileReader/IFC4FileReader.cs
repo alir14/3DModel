@@ -13,12 +13,12 @@ namespace _3DModel.IFCFileReader
         public IFC4FileReader(IfcEngine engine, string path)
             : base(engine, path)
         {
-            this.path = path;
+            this.Path = path;
         }
 
-        protected override void ParsIFCFile()
+        public override void ParsIFCFile()
         {
-            base.IfcModel = IfcEngine.OpenModelUnicode(IntPtr.Zero, path, Constants.IFC4_SCHEMA_NAME);
+            base.IfcModel = IfcEngine.OpenModelUnicode(IntPtr.Zero, Path, Constants.IFC4_SCHEMA_NAME);
 
             if (base.IfcModel != IntPtr.Zero)
             {

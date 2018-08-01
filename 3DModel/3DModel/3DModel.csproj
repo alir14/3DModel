@@ -99,7 +99,7 @@
     <Compile Include="IFCItem.cs" />
     <Compile Include="IFCItemColor.cs" />
     <Compile Include="IFCTreeItem.cs" />
-    <Compile Include="Managers\FileReaderManager.cs" />
+    <Compile Include="Managers\HelperManager.cs" />
     <Compile Include="Sticker.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
