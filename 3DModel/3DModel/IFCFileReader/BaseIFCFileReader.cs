@@ -11,10 +11,11 @@ namespace _3DModel.IFCFileReader
 {
     public abstract class BaseIFCFileReader
     {
+        public IFCItem RootItem;
+
         protected IfcEngine IfcEngine { get; set; }
         protected string Path { get; set; }
         protected IntPtr IfcModel { get; set; }
-        IFCItem RootItem;
 
         private IntPtr IfcObjectInstances, NumberIfcObjectInstance;
 
