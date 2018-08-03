@@ -32,8 +32,6 @@ namespace _3DModel
             UserStickers = new ObservableCollection<Sticker>();
             ModelManager.Instance.MinCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
             ModelManager.Instance.MaxCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
-
-
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -150,8 +148,21 @@ namespace _3DModel
             Reset();
             ModelManager.Instance.LoadModel(filePath);
             InitModel();
+        }
 
-            if(ModelManager.Instance.IfcObject.ModelElementCollection.Count > 0 &&
+        private void InitModel()
+        {
+            Vector3 center = new Vector3(
+                (ModelManager.Instance.MinCorner[0] + ModelManager.Instance.MaxCorner[0]) / 2 , 
+                (ModelManager.Instance.MinCorner[1] + ModelManager.Instance.MaxCorner[1]) / 2 , 
+                (ModelManager.Instance.MinCorner[2] + ModelManager.Instance.MaxCorner[2]) / 2);
+
+
+
+            ModelManager.Instance.CreateMeshes(center);
+            ModelManager.Instance.CreateWireFrames(center);
+
+            if (ModelManager.Instance.IfcObject.ModelElementCollection.Count > 0 &&
                 ModelManager.Instance.IfcObject.ModelLineCollection.Count > 0)
             {
                 foreach (var item in ModelManager.Instance.IfcObject.ModelElementCollection)
@@ -164,16 +175,12 @@ namespace _3DModel
                     viewer.Children.Add(item);
                 }
             }
-        }
 
-        private void InitModel()
-        {
-            Vector3 center = new Vector3(
-                (ModelManager.Instance.MinCorner[0] + ModelManager.Instance.MaxCorner[0]) / 2 , 
-                (ModelManager.Instance.MinCorner[1] + ModelManager.Instance.MaxCorner[1]) / 2 , 
-                (ModelManager.Instance.MinCorner[2] + ModelManager.Instance.MaxCorner[2]) / 2);
-            ModelManager.Instance.CreateMeshes(center);
-            ModelManager.Instance.CreateWireFrames(center);
+            var lights = new DefaultLights();
+            viewer.Children.Add(lights);
+
+            var bound = viewer.Children.FindBounds();
+            viewer.ZoomExtents(bound);
         }
     }
 }
