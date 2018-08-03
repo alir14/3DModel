@@ -15,6 +15,7 @@
 
         <helix:HelixViewport3D x:Name="viewer" ZoomExtentsWhenLoaded="True" Grid.Column="0" 
                                MouseDoubleClick="viewer_MouseDoubleClick" MouseMove="viewer_MouseMove">
+            <ModelVisual3D x:Name="viewerModel"/>
             <helix:DefaultLights />
         </helix:HelixViewport3D>
 

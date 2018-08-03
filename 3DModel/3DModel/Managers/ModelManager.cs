@@ -6,17 +6,28 @@ using HelixToolkit.Wpf.SharpDX;
 using System.Collections.Generic;
 using HelixToolkit.Wpf.SharpDX.Core;
 using System.Runtime.InteropServices;
+using System.Windows.Media;
 
 namespace _3DModel.Managers
 {
     public class ModelManager
     {
-        readonly IfcEngine ifcEngine = new IfcEngine();
-        BaseIFCFileReader IfcObject { get; set; }
         IFCItem HoverIfcItem { get; set; }
         IFCItem SelectedIfcItem { get; set; }
-        Dictionary<MeshGeometryModel3D, IFCItem> MeshToIfcItems = new Dictionary<MeshGeometryModel3D, IFCItem>();
+        Material DefaultMaterial = PhongMaterials.Bronze;
+        System.Windows.Media.Color DefaultLineColor = System.Windows.Media.Color.FromRgb(0, 0, 0);
+        readonly IfcEngine ifcEngine = new IfcEngine();
 
+        public IfcEngine IFCEngine
+        {
+            get
+            {
+                return ifcEngine;
+            }
+        }
+        public BaseIFCFileReader IfcObject { get; set; }
+        public float[] MinCorner { get; set; }
+        public float[] MaxCorner { get; set; }
 
         #region singltone
 
@@ -50,11 +61,11 @@ namespace _3DModel.Managers
             switch (type)
             {
                 case IFCType.IFC2:
-                    IfcObject = new IFC2FileReader(ifcEngine, filePath);
+                    IfcObject = new IFC2FileReader(filePath);
                     IfcObject.ParsIFCFile();
                     break;
                 case IFCType.IFC4:
-                    IfcObject = new IFC4FileReader(ifcEngine, filePath);
+                    IfcObject = new IFC4FileReader(filePath);
                     IfcObject.ParsIFCFile();
                     break;
                 default:
@@ -64,78 +75,29 @@ namespace _3DModel.Managers
 
         public void ResetModel()
         {
-            this.IfcObject.RootItem = null;
+            if(this.IfcObject != null)
+                this.IfcObject.RootItem = null;
+
             HoverIfcItem = null;
+
             SelectedIfcItem = null;
         }
 
         public void CreateMeshes(Vector3 center)
         {
-            var item = this.IfcObject.RootItem;
-
-            while (item != null)
-            {
-                if (item.ifcID != IntPtr.Zero && item.noVerticesForFaces != 0 && item.noPrimitivesForFaces != 0)
-                {
-                    var positions = new Vector3Collection();
-                    var normals = new Vector3Collection();
-
-                    if(item.verticesForFaces != null)
-                    {
-                        for (int i = 0; i < item.noVerticesForFaces; i++)
-                        {
-                            positions.Add( new Vector3(item.verticesForFaces[6 * i + 0] - center.X,
-                                item.verticesForFaces[6 * i + 1] - center.Y, item.verticesForFaces[6 * i + 2] - center.Z));
-
-                            normals.Add( new Vector3(item.verticesForFaces[6 * i + 3], item.verticesForFaces[6 * i + 4], item.verticesForFaces[6 * i + 5]));
-                        }
-                    }
-
-                    var indices = new IntCollection();
-                    if (item.indicesForFaces != null)
-                    {
-                        for (int i = 0; i < 3 * item.noPrimitivesForFaces; i++)
-                        {
-                            indices.Add(item.indicesForFaces[i]);
-                        }
-                    }
-
-
-                    var meshGeometry = new MeshGeometry3D
-                    {
-                        Positions = positions,
-                        Normals = normals,
-                        Indices = indices,
-                        TextureCoordinates = null,
-                        Colors = null,
-                        Tangents = null,
-                        BiTangents = null
-                    };
-
-                    MeshGeometryModel3D mesh = new MeshGeometryModel3D() { Geometry = meshGeometry };
-
-                    item.Mesh3d = mesh;
-
-                    MeshToIfcItems[mesh] = item;
-
-                    mesh.Tag = item.ifcType + ":" + item.ifcID;
-
-
-
-                }
-            }
+            IfcObject.CreateFaceModelsRecursive(this.IfcObject.RootItem, center);
         }
 
-        public void CreateWireFrames()
+        public void CreateWireFrames(Vector3 center)
         {
-
+            IfcObject.CreateWireFrameModelsRecursive(this.IfcObject.RootItem, center); 
         }
 
         private IFCType GetIfcType(string path)
         {
             IFCType result = IFCType.None;
 
-            IntPtr ifcModel = ifcEngine.OpenModelUnicode(IntPtr.Zero, path, Constants.IFC2X3_SCHEMA_NAME);
+            IntPtr ifcModel = ifcEngine.OpenModel(IntPtr.Zero, path, Constants.IFC2X3_SCHEMA_NAME);
 
             if (ifcModel != IntPtr.Zero)
             {
@@ -160,5 +122,6 @@ namespace _3DModel.Managers
 
             return result;
         }
+
     }
 }

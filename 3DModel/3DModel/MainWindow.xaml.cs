@@ -17,9 +17,6 @@ namespace _3DModel
     /// </summary>
     public partial class MainWindow : Window
     {
-        private float[] _minCorner;
-        private float[] _maxCorner;
-
         Popup loadPopup = new Popup();
 
         public ObservableCollection<Sticker> UserStickers { get; set; }
@@ -33,8 +30,8 @@ namespace _3DModel
             InitializeComponent();
             Loaded += MainWindow_Loaded;
             UserStickers = new ObservableCollection<Sticker>();
-            _minCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
-            _maxCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
+            ModelManager.Instance.MinCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
+            ModelManager.Instance.MaxCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
 
 
         }
@@ -144,21 +141,39 @@ namespace _3DModel
         {
             ModelManager.Instance.ResetModel();
             viewer.Children.Clear();
-            _minCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
-            _maxCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
+            ModelManager.Instance.MinCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
+            ModelManager.Instance.MaxCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
         }
 
         private void LoadIFCFile(string filePath)
         {
             Reset();
+            ModelManager.Instance.LoadModel(filePath);
             InitModel();
+
+            if(ModelManager.Instance.IfcObject.ModelElementCollection.Count > 0 &&
+                ModelManager.Instance.IfcObject.ModelLineCollection.Count > 0)
+            {
+                foreach (var item in ModelManager.Instance.IfcObject.ModelElementCollection)
+                {
+                    viewer.Children.Add(item);
+                }
+
+                foreach (var item in ModelManager.Instance.IfcObject.ModelLineCollection)
+                {
+                    viewer.Children.Add(item);
+                }
+            }
         }
 
         private void InitModel()
         {
-            Vector3 center = new Vector3((_minCorner[0] + _maxCorner[0]) / 2 , (_minCorner[1] + _maxCorner[1]) / 2 , (_minCorner[2] + _maxCorner[2]) / 2);
+            Vector3 center = new Vector3(
+                (ModelManager.Instance.MinCorner[0] + ModelManager.Instance.MaxCorner[0]) / 2 , 
+                (ModelManager.Instance.MinCorner[1] + ModelManager.Instance.MaxCorner[1]) / 2 , 
+                (ModelManager.Instance.MinCorner[2] + ModelManager.Instance.MaxCorner[2]) / 2);
             ModelManager.Instance.CreateMeshes(center);
-            ModelManager.Instance.CreateWireFrames();
+            ModelManager.Instance.CreateWireFrames(center);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using IfcEngineCS;
+﻿using _3DModel.Managers;
+using IfcEngineCS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,15 @@ namespace _3DModel.IFCFileReader
 {
     public class IFC4FileReader: BaseIFCFileReader
     {
-        public IFC4FileReader(IfcEngine engine, string path)
-            : base(engine, path)
+        public IFC4FileReader(string path)
+            : base(path)
         {
             this.Path = path;
         }
 
         public override void ParsIFCFile()
         {
-            base.IfcModel = IfcEngine.OpenModelUnicode(IntPtr.Zero, Path, Constants.IFC4_SCHEMA_NAME);
+            base.IfcModel = ModelManager.Instance.IFCEngine.OpenModel(IntPtr.Zero, Path, Constants.IFC4_SCHEMA_NAME);
 
             if (base.IfcModel != IntPtr.Zero)
             {

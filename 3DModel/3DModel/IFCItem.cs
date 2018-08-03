@@ -72,7 +72,9 @@ namespace _3DModel
         public int indexOffsetForWireFrame;
 
         public IFCTreeItem ifcTreeItem = null;
-        public MeshGeometryModel3D Mesh3d;
-        public LineGeometryModel3D Wireframe;
+        //public MeshGeometryModel3D Mesh3d;
+        public HelixToolkit.Wpf.MeshGeometryVisual3D Mesh3d;
+        //public LineGeometryModel3D Wireframe;
+        public HelixToolkit.Wpf.LinesVisual3D Wireframe;
     }
 }
