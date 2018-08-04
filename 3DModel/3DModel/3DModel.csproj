@@ -92,6 +92,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BaseViewModel.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="IFCFileReader\BaseIFCFileReader.cs" />
     <Compile Include="IFCFileReader\IFC2FileReader.cs" />
@@ -99,7 +100,9 @@
     <Compile Include="IFCItem.cs" />
     <Compile Include="IFCItemColor.cs" />
     <Compile Include="IFCTreeItem.cs" />
+    <Compile Include="MainViewModel.cs" />
     <Compile Include="Managers\ModelManager.cs" />
+    <Compile Include="ObservableObject.cs" />
     <Compile Include="Sticker.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

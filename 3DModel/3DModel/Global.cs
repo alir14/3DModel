@@ -19,6 +19,8 @@ namespace _3DModel
         public const string IFC2X3_SCHEMA_NAME = "IFC2X3_TC1.exp";
         public const string XML_SETTINGS_IFC2x3 = @"IFC2X3-Settings.xml";
         public const string XML_SETTINGS_IFC4 = @"IFC4-Settings.xml";
+        public const string ORTHOGRAPHIC_CAMERA = "Orthographic Camera";
+        public const string PERSPECTIVE_CAMERA = "Perspective Camera";
     }
 
 }

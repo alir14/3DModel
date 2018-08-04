@@ -3,19 +3,17 @@ using SharpDX;
 using IfcEngineCS;
 using _3DModel.IFCFileReader;
 using HelixToolkit.Wpf.SharpDX;
-using System.Collections.Generic;
-using HelixToolkit.Wpf.SharpDX.Core;
 using System.Runtime.InteropServices;
-using System.Windows.Media;
 
 namespace _3DModel.Managers
 {
     public class ModelManager
     {
+        float[] minCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
+        float[] maxCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
+
         IFCItem HoverIfcItem { get; set; }
         IFCItem SelectedIfcItem { get; set; }
-        Material DefaultMaterial = PhongMaterials.Bronze;
-        System.Windows.Media.Color DefaultLineColor = System.Windows.Media.Color.FromRgb(0, 0, 0);
         readonly IfcEngine ifcEngine = new IfcEngine();
 
         public IfcEngine IFCEngine
@@ -26,8 +24,16 @@ namespace _3DModel.Managers
             }
         }
         public BaseIFCFileReader IfcObject { get; set; }
-        public float[] MinCorner { get; set; }
-        public float[] MaxCorner { get; set; }
+        public float[] MinCorner
+        {
+            get { return minCorner; }
+            set { minCorner = value; }
+        }
+        public float[] MaxCorner
+        {
+            get { return maxCorner; }
+            set { maxCorner = value; }
+        }
 
         #region singltone
 
@@ -85,12 +91,12 @@ namespace _3DModel.Managers
 
         public void CreateMeshes(Vector3 center)
         {
-            IfcObject.CreateFaceModelsRecursive(this.IfcObject.RootItem, center);
+            IfcObject.CreateFaceModelsRecursive_WPFtyle(this.IfcObject.RootItem, center);
         }
 
         public void CreateWireFrames(Vector3 center)
         {
-            IfcObject.CreateWireFrameModelsRecursive(this.IfcObject.RootItem, center); 
+            IfcObject.CreateWireFrameModelsRecursive_WPFStyle(this.IfcObject.RootItem, center); 
         }
 
         private IFCType GetIfcType(string path)
