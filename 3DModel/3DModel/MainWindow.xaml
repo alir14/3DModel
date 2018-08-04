@@ -6,72 +6,84 @@
         xmlns:hx="http://helix-toolkit.org/wpf/SharpDX"
         xmlns:local="clr-namespace:_3DModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1500">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="80*" />
-            <ColumnDefinition Width="20*"/>
-        </Grid.ColumnDefinitions>
+        Title="MainWindow" Height="700" Width="Auto" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterScreen">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80*" />
+                <ColumnDefinition Width="20*"/>
+            </Grid.ColumnDefinitions>
 
-        <hx:Viewport3DX 
-            Grid.Row="1"
-            x:Name="viewer" 
-            Camera="{Binding Camera}"
-            TextBrush="Black"           
-            ShowCoordinateSystem="True"
-            CoordinateSystemLabelForeground="White"
-            UseDefaultGestures="False"
-            RotateAroundMouseDownPoint="True"
-            ModelUpDirection="0,0,1"
-            AllowDrop="True"
-            >
-            <hx:Viewport3DX.InputBindings>
-                <KeyBinding Key="B" Command="hx:ViewportCommands.BackView"/>
-                <KeyBinding Key="F" Command="hx:ViewportCommands.FrontView"/>
-                <KeyBinding Key="U" Command="hx:ViewportCommands.TopView"/>
-                <KeyBinding Key="D" Command="hx:ViewportCommands.BottomView"/>
-                <KeyBinding Key="L" Command="hx:ViewportCommands.LeftView"/>
-                <KeyBinding Key="R" Command="hx:ViewportCommands.RightView"/>
-                <KeyBinding Gesture="Control+E" Command="hx:ViewportCommands.ZoomExtents"/>
-                <MouseBinding Gesture="RightClick" Command="hx:ViewportCommands.Rotate"/>
-                <MouseBinding Gesture="MiddleClick" Command="hx:ViewportCommands.Zoom"/>
-                <MouseBinding Gesture="LeftClick" Command="hx:ViewportCommands.Pan"/>
-            </hx:Viewport3DX.InputBindings>
+            <hx:Viewport3DX 
+                Grid.Column="0"
+                x:Name="viewer" Camera="{Binding Camera}"
+                TextBrush="Black" ShowCoordinateSystem="True"
+                CoordinateSystemLabelForeground="White" UseDefaultGestures="False"
+                RotateAroundMouseDownPoint="True" ModelUpDirection="0,0,1"
+                AllowDrop="True" >
+                <hx:Viewport3DX.InputBindings>
+                    <KeyBinding Key="B" Command="hx:ViewportCommands.BackView"/>
+                    <KeyBinding Key="F" Command="hx:ViewportCommands.FrontView"/>
+                    <KeyBinding Key="U" Command="hx:ViewportCommands.TopView"/>
+                    <KeyBinding Key="D" Command="hx:ViewportCommands.BottomView"/>
+                    <KeyBinding Key="L" Command="hx:ViewportCommands.LeftView"/>
+                    <KeyBinding Key="R" Command="hx:ViewportCommands.RightView"/>
+                    <KeyBinding Gesture="Control+E" Command="hx:ViewportCommands.ZoomExtents"/>
+                    <MouseBinding Gesture="RightClick" Command="hx:ViewportCommands.Rotate"/>
+                    <MouseBinding Gesture="MiddleClick" Command="hx:ViewportCommands.Zoom"/>
+                    <MouseBinding Gesture="LeftClick" Command="hx:ViewportCommands.Pan"/>
+                </hx:Viewport3DX.InputBindings>
 
-            <hx:AmbientLight3D     Color="{Binding AmbientLightColor}"/>
-            <hx:DirectionalLight3D Color="{Binding Light1Color}" IsRendering="{Binding RenderLight1}" Direction="{Binding Light1Direction}" DirectionTransform="{Binding Light1DirectionTransform}"/>
-            <hx:PointLight3D       Color="{Binding Light2Color}" IsRendering="{Binding RenderLight2}" Attenuation="{Binding Light2Attenuation}" Transform="{Binding Light2Transform}"/>
-            <hx:PointLight3D       Color="{Binding Light3Color}" IsRendering="{Binding RenderLight3}" Attenuation="{Binding Light3Attenuation}" Transform="{Binding Light3Transform}"/>
-            <hx:SpotLight3D        Color="{Binding Light4Color}" IsRendering="{Binding RenderLight4}" Attenuation="{Binding Light4Attenuation}" Transform="{Binding Light4Transform}" Direction="{Binding Light4Direction}" DirectionTransform="{Binding Light4DirectionTransform}"/>
+                <hx:AmbientLight3D     Color="{Binding AmbientLightColor}"/>
+                <hx:DirectionalLight3D Color="{Binding Light1Color}" IsRendering="{Binding RenderLight1}" Direction="{Binding Light1Direction}" DirectionTransform="{Binding Light1DirectionTransform}"/>
+                <hx:PointLight3D       Color="{Binding Light2Color}" IsRendering="{Binding RenderLight2}" Attenuation="{Binding Light2Attenuation}" Transform="{Binding Light2Transform}"/>
+                <hx:PointLight3D       Color="{Binding Light3Color}" IsRendering="{Binding RenderLight3}" Attenuation="{Binding Light3Attenuation}" Transform="{Binding Light3Transform}"/>
+                <hx:SpotLight3D        Color="{Binding Light4Color}" IsRendering="{Binding RenderLight4}" Attenuation="{Binding Light4Attenuation}" Transform="{Binding Light4Transform}" Direction="{Binding Light4Direction}" DirectionTransform="{Binding Light4DirectionTransform}"/>
 
-            <hx:GroupModel3D x:Name="groupModelViewer" ItemsSource="{Binding Model,UpdateSourceTrigger=PropertyChanged}"></hx:GroupModel3D>
-        </hx:Viewport3DX>
-        <TextBox x:Name="txtModelPath" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="5,34,0,0" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Top" Width="290"/>
-        <Button x:Name="BtnBrows" Content="Browse" Grid.Column="1" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnBrows_Click"/>
-        <Button x:Name="BtnReset" Content="BtnReset" Grid.Column="1" HorizontalAlignment="Left" Margin="84.8,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnReset_Click"/>
+                <hx:GroupModel3D x:Name="groupModelViewer" ItemsSource="{Binding Model,UpdateSourceTrigger=PropertyChanged}"></hx:GroupModel3D>
+            </hx:Viewport3DX>
+            
+            <TextBox x:Name="txtModelPath" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="5,34,0,0" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Top" Width="290"/>
+            <Button x:Name="BtnBrows" Content="Browse" Grid.Column="1" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnBrows_Click"/>
+            <Button x:Name="BtnReset" Content="BtnReset" Grid.Column="1" HorizontalAlignment="Left" Margin="84.8,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnReset_Click"/>
 
-        <ListView Name="lstSelectedPoints" ItemsSource="{Binding UserStickers}" Grid.Column="1" HorizontalAlignment="Left" Height="333" VerticalAlignment="Top" Width="285" Margin="5,78,0,0">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding ID}" Width="80"/>
-                    <GridViewColumn Header="User Comment" DisplayMemberBinding="{Binding UserMessage}" Width="170"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <!--<Button Content="PopUp" Grid.Column="1" HorizontalAlignment="Left" Margin="220,594,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>-->
-        <Popup Name="myPopup" Placement="Mouse"
+            <ListView Name="lstSelectedPoints" ItemsSource="{Binding UserStickers}" Grid.Column="1" HorizontalAlignment="Left" Height="333" VerticalAlignment="Top" Width="285" Margin="5,78,0,0">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="ID" DisplayMemberBinding="{Binding ID}" Width="80"/>
+                        <GridViewColumn Header="User Comment" DisplayMemberBinding="{Binding UserMessage}" Width="170"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Popup Name="myPopup" Placement="Mouse"
                HorizontalOffset="-100"
                VerticalOffset="-100"
                AllowsTransparency="True" Width="200" Height="200">
-            <Grid>
-                <TextBlock Name="myPopupText" Background="LightBlue" Foreground="Blue">
+                <Grid>
+                    <TextBlock Name="myPopupText" Background="LightBlue" Foreground="Blue">
                 Sticket Comment
-                </TextBlock>
-                <TextBox x:Name="txtUserComment" TextWrapping="Wrap" Text="" Width="190" Margin="5,23,5,38"/>
-                <Button x:Name="BtnClose" Content="Close" Width="75" Height="23" Click="BtnClose_Click" Margin="115,167,10,10"/>
-            </Grid>
-        </Popup>
-        <Label x:Name="lblFlag" Content="Label" Grid.Column="1" HorizontalAlignment="Left" Margin="10,594,0,0" VerticalAlignment="Top" Width="109"/>
+                    </TextBlock>
+                    <TextBox x:Name="txtUserComment" TextWrapping="Wrap" Text="" Width="190" Margin="5,23,5,38"/>
+                    <Button x:Name="BtnClose" Content="Close" Width="75" Height="23" Click="BtnClose_Click" Margin="115,167,10,10"/>
+                </Grid>
+            </Popup>
+            <StatusBar Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                <StatusBar.Background>
+                    <SolidColorBrush Opacity="0.25" Color="WhiteSmoke"/>
+                </StatusBar.Background>
+                <StatusBarItem>
+                    <TextBlock Text="Loading ...." />
+                </StatusBarItem>
+                <StatusBarItem>
+                    <TextBlock Text="{Binding Camera.Position, StringFormat= Position: \{0:0.0\}}" />
+                </StatusBarItem>
+                <StatusBarItem>
+                    <TextBlock Text="{Binding Camera.LookDirection, StringFormat= LookDirection: \{0:0.0\}}" />
+                </StatusBarItem>
+                <StatusBarItem>
+                    <TextBlock Text="{Binding Camera.UpDirection, StringFormat= UpDirection: \{0:0.0\}}" />
+                </StatusBarItem>
+            </StatusBar>
 
-    </Grid>
+        </Grid>
+
 </Window>
