@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using HelixToolkit.Wpf.SharpDX;
 using System.Collections.Generic;
 
-namespace _3DModel
+namespace _3DModel.IFC
 {
     public class IFCItem
     {

@@ -2,6 +2,7 @@
 using SharpDX;
 using System.Xml;
 using IfcEngineCS;
+using _3DModel.IFC;
 using HelixToolkit.Wpf;
 using _3DModel.Managers;
 using HelixToolkit.Wpf.SharpDX;

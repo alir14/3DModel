@@ -62,7 +62,7 @@ namespace _3DModel
 
         private void BtnLoad_Click(object sender, RoutedEventArgs e)
         {
-            LoadIFCFile(txtModelPath.Text);
+            
         }
 
         private void BtnBrows_Click(object sender, RoutedEventArgs e)
@@ -72,6 +72,8 @@ namespace _3DModel
             if(openFileDialog.ShowDialog() == true)
             {
                 txtModelPath.Text = openFileDialog.FileName;
+                if(!string.IsNullOrEmpty(openFileDialog.FileName))
+                    LoadIFCFile(txtModelPath.Text);
             }
         }
 

@@ -3,7 +3,7 @@ using SharpDX;
 using HelixToolkit.Wpf.SharpDX;
 using System.Windows.Media.Media3D;
 
-namespace _3DModel
+namespace _3DModel.ViewModel
 {
     public class MainViewModel:BaseViewModel
     {

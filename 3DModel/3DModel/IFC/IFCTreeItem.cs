@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace _3DModel
+namespace _3DModel.IFC
 {
     public class IFCTreeItem
     {

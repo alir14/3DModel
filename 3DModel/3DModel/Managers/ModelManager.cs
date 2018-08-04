@@ -1,6 +1,8 @@
 ﻿using System;
 using SharpDX;
 using IfcEngineCS;
+using _3DModel.IFC;
+using _3DModel.ViewModel;
 using _3DModel.IFCFileReader;
 using HelixToolkit.Wpf.SharpDX;
 using System.Windows.Media.Media3D;

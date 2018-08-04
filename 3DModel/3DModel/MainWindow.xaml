@@ -3,22 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:helix="http://helix-toolkit.org/wpf"
         xmlns:hx="http://helix-toolkit.org/wpf/SharpDX"
         xmlns:local="clr-namespace:_3DModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1500">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="75*" />
-            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="80*" />
+            <ColumnDefinition Width="20*"/>
         </Grid.ColumnDefinitions>
-
-        <!--<helix:HelixViewport3D x:Name="viewer" ZoomExtentsWhenLoaded="True" Grid.Column="0" 
-                               MouseDoubleClick="viewer_MouseDoubleClick" MouseMove="viewer_MouseMove">
-            <ModelVisual3D x:Name="viewerModel"/>
-            <helix:DefaultLights />
-        </helix:HelixViewport3D>-->
 
         <hx:Viewport3DX 
             Grid.Row="1"
@@ -53,20 +46,11 @@
 
             <hx:GroupModel3D x:Name="groupModelViewer" ItemsSource="{Binding Model,UpdateSourceTrigger=PropertyChanged}"></hx:GroupModel3D>
         </hx:Viewport3DX>
+        <TextBox x:Name="txtModelPath" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="5,34,0,0" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Top" Width="290"/>
+        <Button x:Name="BtnBrows" Content="Browse" Grid.Column="1" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnBrows_Click"/>
+        <Button x:Name="BtnReset" Content="BtnReset" Grid.Column="1" HorizontalAlignment="Left" Margin="84.8,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnReset_Click"/>
 
-
-        <Button x:Name="BtnLoad" Content="Load" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Click="BtnLoad_Click" />
-        <TextBox x:Name="txtModelPath" Grid.Column="1" HorizontalAlignment="Left" Height="83" Margin="5,34,0,0" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Top" Width="290"/>
-        <Button x:Name="BtnBrows" Content="Browse" Grid.Column="1" HorizontalAlignment="Left" Margin="220,122,0,0" VerticalAlignment="Top" Width="75" Click="BtnBrows_Click"/>
-        <Button x:Name="BtnReset" Content="BtnReset" Grid.Column="1" HorizontalAlignment="Left" Margin="85,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnReset_Click"/>
-        <Label Content="X: " Grid.Column="1" HorizontalAlignment="Left" Margin="10,163,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtX" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="35,163,0,0" Text="" VerticalAlignment="Top" Width="209"/>
-        <Label Content="Y: " Grid.Column="1" HorizontalAlignment="Left" Margin="10,194,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtY" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="35,197,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="209"/>
-        <Label Content="Z: " Grid.Column="1" HorizontalAlignment="Left" Margin="10,225,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtZ" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="35,225,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="209"/>
-        
-        <ListView Name="lstSelectedPoints" ItemsSource="{Binding UserStickers}" Grid.Column="1" HorizontalAlignment="Left" Height="333" Margin="10,256,0,0" VerticalAlignment="Top" Width="285">
+        <ListView Name="lstSelectedPoints" ItemsSource="{Binding UserStickers}" Grid.Column="1" HorizontalAlignment="Left" Height="333" VerticalAlignment="Top" Width="285" Margin="5,78,0,0">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="ID" DisplayMemberBinding="{Binding ID}" Width="80"/>

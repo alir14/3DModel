@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _3DModel
+namespace _3DModel.ViewModel
 {
     public class BaseViewModel: ObservableObject
     {
