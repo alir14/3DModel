@@ -140,7 +140,7 @@ namespace _3DModel.Managers
         {
             IFCType result = IFCType.None;
 
-            IntPtr ifcModel = ifcEngine.OpenModel(IntPtr.Zero, path, Constants.IFC2X3_SCHEMA_NAME);
+            IntPtr ifcModel = ifcEngine.OpenModelUnicode(IntPtr.Zero, path, Constants.IFC2X3_SCHEMA_NAME);
 
             if (ifcModel != IntPtr.Zero)
             {

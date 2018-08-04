@@ -19,7 +19,7 @@ namespace _3DModel.IFCFileReader
 
         public override void ParsIFCFile()
         {
-            base.IfcModel = ModelManager.Instance.IFCEngine.OpenModel(IntPtr.Zero, Path, Constants.IFC4_SCHEMA_NAME);
+            base.IfcModel = ModelManager.Instance.IFCEngine.OpenModelUnicode(IntPtr.Zero, Path, Constants.IFC4_SCHEMA_NAME);
 
             if (base.IfcModel != IntPtr.Zero)
             {
