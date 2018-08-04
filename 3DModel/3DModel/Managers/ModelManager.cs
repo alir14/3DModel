@@ -3,6 +3,7 @@ using SharpDX;
 using IfcEngineCS;
 using _3DModel.IFCFileReader;
 using HelixToolkit.Wpf.SharpDX;
+using System.Windows.Media.Media3D;
 using System.Runtime.InteropServices;
 
 namespace _3DModel.Managers
@@ -11,10 +12,25 @@ namespace _3DModel.Managers
     {
         float[] minCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
         float[] maxCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
+        bool makeModelCentered = true;
+        readonly IfcEngine ifcEngine = new IfcEngine();
+        MainViewModel viewModel = new MainViewModel();
 
         IFCItem HoverIfcItem { get; set; }
         IFCItem SelectedIfcItem { get; set; }
-        readonly IfcEngine ifcEngine = new IfcEngine();
+        Vector3 Max
+        {
+            get { return new Vector3(maxCorner[0], maxCorner[1], maxCorner[2]) - Center; }
+        }
+        Vector3 Min
+        {
+            get { return new Vector3(minCorner[0], minCorner[1], minCorner[2]) - Center; }
+        }
+        Vector3 Center
+        {
+            get
+            { return makeModelCentered ? Vector3.Zero : new Vector3(minCorner[0] + maxCorner[0], minCorner[1] + maxCorner[1], minCorner[2] + maxCorner[2]) * 0.5f; }
+        }
 
         public IfcEngine IFCEngine
         {
@@ -33,6 +49,12 @@ namespace _3DModel.Managers
         {
             get { return maxCorner; }
             set { maxCorner = value; }
+        }
+
+        public MainViewModel ViewModel
+        {
+            get { return viewModel; }
+            set { viewModel = value; }
         }
 
         #region singltone
@@ -89,12 +111,25 @@ namespace _3DModel.Managers
             SelectedIfcItem = null;
         }
 
-        public void CreateMeshes(Vector3 center)
+        public void InitModel()
+        {
+            Vector3 center = new Vector3(
+                (MinCorner[0] + MaxCorner[0]) / 2,
+                (MinCorner[1] + MaxCorner[1]) / 2,
+                (MinCorner[2] + MaxCorner[2]) / 2);
+
+            CreateMeshes(center);
+            CreateWireFrames(center);
+
+            this.viewModel.Model = IfcObject.Model;
+        }
+
+        private void CreateMeshes(Vector3 center)
         {
             IfcObject.CreateFaceModelsRecursive_WPFtyle(this.IfcObject.RootItem, center);
         }
 
-        public void CreateWireFrames(Vector3 center)
+        private void CreateWireFrames(Vector3 center)
         {
             IfcObject.CreateWireFrameModelsRecursive_WPFStyle(this.IfcObject.RootItem, center); 
         }
@@ -129,5 +164,41 @@ namespace _3DModel.Managers
             return result;
         }
 
+        public void ZoomExtent(Viewport3DX viewport, double animationTime = 200)
+        {
+            var center = new Point3D(Center.X, Center.Y, Center.Z);
+            var radius = (Max - Min).Length() * 0.5;
+            var camera = this.viewModel.Camera;
+
+            var perspectiveCam = camera as HelixToolkit.Wpf.SharpDX.PerspectiveCamera;
+            if (perspectiveCam != null)
+            {
+                perspectiveCam.FarPlaneDistance = radius * 100;
+                perspectiveCam.NearPlaneDistance = radius * 0.02;
+
+                double disth = radius / Math.Tan(0.5 * perspectiveCam.FieldOfView * Math.PI / 180);
+                double vfov = perspectiveCam.FieldOfView / viewport.ActualWidth * viewport.ActualHeight;
+                double distv = radius / Math.Tan(0.5 * vfov * Math.PI / 180);
+
+                double dist = Math.Max(disth, distv);
+                var dir = perspectiveCam.LookDirection;
+                dir.Normalize();
+                perspectiveCam.LookAt(center, dir * dist, animationTime);
+            }
+
+            var oethographicCam = camera as HelixToolkit.Wpf.SharpDX.OrthographicCamera;
+            if (oethographicCam != null)
+            {
+                oethographicCam.LookAt(center, oethographicCam.LookDirection, animationTime);
+                double newWidth = radius * 2;
+
+                if (viewport.ActualWidth > viewport.ActualHeight)
+                {
+                    newWidth = radius * 2 * viewport.ActualWidth / viewport.ActualHeight;
+                }
+
+                oethographicCam.AnimateWidth(newWidth, animationTime);
+            }
+        }
     }
 }

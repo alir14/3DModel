@@ -4,7 +4,6 @@ using System.Xml;
 using IfcEngineCS;
 using HelixToolkit.Wpf;
 using _3DModel.Managers;
-using System.Windows.Media;
 using HelixToolkit.Wpf.SharpDX;
 using System.Collections.Generic;
 using HelixToolkit.Wpf.SharpDX.Core;
@@ -20,22 +19,21 @@ namespace _3DModel.IFCFileReader
         protected IntPtr IfcModel { get; set; }
 
         IntPtr IfcObjectInstances, NumberIfcObjectInstance;
-        //Brush DefaultBrush = Brushes.Gray;
-        Material DefaultMaterial = HelixToolkit.Wpf.SharpDX.PhongMaterials.Bronze;
+        Material DefaultMaterial = PhongMaterials.Bronze;
         System.Windows.Media.Color DefaultLineColor = System.Windows.Media.Color.FromRgb(0, 0, 0);
-        Dictionary<MeshGeometryModel3D, IFCItem> MeshToIfcItems = new Dictionary<MeshGeometryModel3D, IFCItem>();
         //List<MeshGeometryVisual3D> modelElementCollection = new List<MeshGeometryVisual3D>();
         //List<LinesVisual3D> modelLineCollection = new List<LinesVisual3D>();
         Element3DCollection model = new Element3DCollection();
+        Dictionary<MeshGeometryModel3D, IFCItem> MeshToIfcItems = new Dictionary<MeshGeometryModel3D, IFCItem>();
 
-        //public List<HelixToolkit.Wpf.LinesVisual3D> ModelLineCollection
+        //public List<LinesVisual3D> ModelLineCollection
         //{
         //    get
         //    {
         //        return modelLineCollection;
         //    }
         //}
-        //public List<HelixToolkit.Wpf.MeshGeometryVisual3D> ModelElementCollection
+        //public List<MeshGeometryVisual3D> ModelElementCollection
         //{
         //    get
         //    {
@@ -81,7 +79,7 @@ namespace _3DModel.IFCFileReader
             //            }
             //        }
 
-            //        var indices = new Int32Collection();
+            //        var indices = new System.Windows.Media.Int32Collection();
             //        if (item.indicesForFaces != null)
             //        {
             //            for (int i = 0; i < 3 * item.noPrimitivesForFaces; i++)
@@ -101,14 +99,14 @@ namespace _3DModel.IFCFileReader
 
             //        item.Mesh3d = mesh;
 
-            //        MeshToIfcItems[mesh] = item;
+            //        //MeshToIfcItems[mesh] = item;
 
-            //        FillMeshByIfcColor(item);
+            //        FillMeshByIfcColor_WinForm(item);
 
             //        modelElementCollection.Add(mesh);
             //    }
 
-            //    CreateFaceModelsRecursive(item.child, center);
+            //    CreateFaceModelsRecursive_WinFrmStyle(item.child, center);
 
             //    item = item.next;
             //}
@@ -160,7 +158,7 @@ namespace _3DModel.IFCFileReader
                     item.Mesh3d = mesh;
                     MeshToIfcItems[mesh] = item;
 
-                    FillMeshByIfcColor(item);
+                    FillMeshByIfcColor_WPF(item);
 
                     mesh.Tag = item.ifcType + ":" + item.ifcID;
                     model.Add(mesh);
@@ -218,7 +216,7 @@ namespace _3DModel.IFCFileReader
             //        modelLineCollection.Add(wireframe);
             //    }
 
-            //    CreateWireFrameModelsRecursive(item.child, center);
+            //    CreateWireFrameModelsRecursive_WinFrmStyle(item.child, center);
 
             //    item = item.next;
             //}
@@ -375,8 +373,6 @@ namespace _3DModel.IFCFileReader
             return Marshal.PtrToStringUni(ifcAttribute);
         }
 
-        int counter = 0;
-
         private void GenerateGeometry(IntPtr model, IFCItem item)
         {
             while (item != null)
@@ -408,8 +404,6 @@ namespace _3DModel.IFCFileReader
                 GenerateGeometry(model, item.child);
 
                 item = item.next;
-
-                counter++;
             }
         }
 
@@ -513,56 +507,50 @@ namespace _3DModel.IFCFileReader
             }
         }
 
-        private void FillMeshByIfcColor(IFCItem item)
+        private void FillMeshByIfcColor_WPF(IFCItem item)
         {
             if (item.Mesh3d != null)
             {
-                //if (item.ifcTreeItem.ifcColor != null)
-                //{
+                Random rand = new Random();
+                byte[] colorValue = new byte[4];
+                rand.NextBytes(colorValue);
+
                 //var ifcColor = item.ifcTreeItem.ifcColor;
-                //var color = System.Windows.Media.Color.FromArgb((byte)(255 - ifcColor.A * 255),
-                //    (byte)(ifcColor.R * 255), (byte)(ifcColor.G * 255), (byte)(ifcColor.B * 255));
-                //Random rand = new Random();
-                //byte[] colorValue = new byte[3];
-                //rand.NextBytes(colorValue);
+                var color = System.Windows.Media.Color.FromArgb(
+                    (byte)(255 - colorValue[0] * 255), 
+                    (byte)(colorValue[1] * 255), 
+                    (byte)(colorValue[2] * 255),
+                    (byte)(colorValue[3] * 255));
 
-                //var color = new System.Windows.Media.Color();
-                //color.R = colorValue[0];
-                //color.G = colorValue[1];
-                //color.B = colorValue[2];
-
-                //item.Mesh3d.Fill = new SolidColorBrush(color);
-                //}
-                //else
-                //{
-                //    item.Mesh3d.Fill = DefaultBrush;
-                //}
-
-                //if (item.ifcTreeItem.ifcColor != null)
-                //{
-                //var ifcColor = item.ifcTreeItem.ifcColor;
-
-                    Random rand = new Random();
-                    byte[] colorValue = new byte[3];
-                    rand.NextBytes(colorValue);
-                    var color = System.Windows.Media.Color.FromArgb(255,
-                        colorValue[0],
-                        colorValue[1],
-                        colorValue[2]);
-                    item.Mesh3d.Material = new PhongMaterial()
-                    {
-                        AmbientColor = Colors.Black.ToColor4(),
-                        DiffuseColor = Colors.Black.ToColor4(),
-                        EmissiveColor = color.ToColor4(),
-                        ReflectiveColor = Colors.Black.ToColor4(),
-                        SpecularColor = color.ToColor4(),
-                    };
-                //}
-                //else
-                //{
-                //    item.Mesh3d.Material = PhongMaterials.Bronze;
-                //}
+                item.Mesh3d.Material = new PhongMaterial()
+                {
+                    AmbientColor = System.Windows.Media.Colors.Black.ToColor4(),
+                    DiffuseColor = System.Windows.Media.Colors.Black.ToColor4(),
+                    EmissiveColor = color.ToColor4(),
+                    ReflectiveColor = System.Windows.Media.Colors.Black.ToColor4(),
+                    SpecularColor = color.ToColor4(),
+                };
             }
+            else
+            {
+                item.Mesh3d.Material = PhongMaterials.Bronze;
+            }
+        }
+
+        private void FillMeshByIfcColor_WinForm(IFCItem item)
+        {
+            //if (item.Mesh3d != null)
+            //{
+            //    var ifcColor = item.ifcTreeItem.ifcColor;
+            //    var color = System.Windows.Media.Color.FromArgb((byte)(255 - ifcColor.A * 255),
+            //        (byte)(ifcColor.R * 255), (byte)(ifcColor.G * 255), (byte)(ifcColor.B * 255));
+            //    item.Mesh3d.Fill = new SolidColorBrush(color);
+            //}
+            //else
+            //{
+            //    item.Mesh3d.Fill = _defaultBrush;
+            //}
+
         }
 
     }

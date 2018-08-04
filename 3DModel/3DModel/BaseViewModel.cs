@@ -21,8 +21,6 @@ namespace _3DModel
 
         private void BaseViewModel_CameraModelChanged(object sender, EventArgs e)
         {
-            this.cameraModel = Constants.PERSPECTIVE_CAMERA;
-
             if (this.cameraModel == Constants.ORTHOGRAPHIC_CAMERA)
             {
                 this.Camera = new OrthographicCamera
@@ -48,6 +46,7 @@ namespace _3DModel
                 throw new HelixToolkitException("Camera Model Error.");
             }
 
+            this.cameraModel = Constants.PERSPECTIVE_CAMERA;
         }
 
         protected virtual void OnCameraModelChanged()

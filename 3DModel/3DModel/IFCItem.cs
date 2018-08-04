@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using HelixToolkit.Wpf;
 using System.Threading.Tasks;
 using HelixToolkit.Wpf.SharpDX;
 using System.Collections.Generic;
@@ -73,8 +74,11 @@ namespace _3DModel
 
         public IFCTreeItem ifcTreeItem = null;
         //public MeshGeometryModel3D Mesh3d;
-        public HelixToolkit.Wpf.MeshGeometryVisual3D Mesh3d;
+        //public MeshGeometryVisual3D Mesh3d;
         //public LineGeometryModel3D Wireframe;
-        public HelixToolkit.Wpf.LinesVisual3D Wireframe;
+        //public LinesVisual3D Wireframe;
+
+        public MeshGeometryModel3D Mesh3d;
+        public LineGeometryModel3D Wireframe;
     }
 }

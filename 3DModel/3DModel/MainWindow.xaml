@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:helix="http://helix-toolkit.org/wpf"
+        xmlns:hx="http://helix-toolkit.org/wpf/SharpDX"
         xmlns:local="clr-namespace:_3DModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1500">
@@ -13,11 +14,45 @@
             <ColumnDefinition Width="25*"/>
         </Grid.ColumnDefinitions>
 
-        <helix:HelixViewport3D x:Name="viewer" ZoomExtentsWhenLoaded="True" Grid.Column="0" 
+        <!--<helix:HelixViewport3D x:Name="viewer" ZoomExtentsWhenLoaded="True" Grid.Column="0" 
                                MouseDoubleClick="viewer_MouseDoubleClick" MouseMove="viewer_MouseMove">
             <ModelVisual3D x:Name="viewerModel"/>
             <helix:DefaultLights />
-        </helix:HelixViewport3D>
+        </helix:HelixViewport3D>-->
+
+        <hx:Viewport3DX 
+            Grid.Row="1"
+            x:Name="viewer" 
+            Camera="{Binding Camera}"
+            TextBrush="Black"           
+            ShowCoordinateSystem="True"
+            CoordinateSystemLabelForeground="White"
+            UseDefaultGestures="False"
+            RotateAroundMouseDownPoint="True"
+            ModelUpDirection="0,0,1"
+            AllowDrop="True"
+            >
+            <hx:Viewport3DX.InputBindings>
+                <KeyBinding Key="B" Command="hx:ViewportCommands.BackView"/>
+                <KeyBinding Key="F" Command="hx:ViewportCommands.FrontView"/>
+                <KeyBinding Key="U" Command="hx:ViewportCommands.TopView"/>
+                <KeyBinding Key="D" Command="hx:ViewportCommands.BottomView"/>
+                <KeyBinding Key="L" Command="hx:ViewportCommands.LeftView"/>
+                <KeyBinding Key="R" Command="hx:ViewportCommands.RightView"/>
+                <KeyBinding Gesture="Control+E" Command="hx:ViewportCommands.ZoomExtents"/>
+                <MouseBinding Gesture="RightClick" Command="hx:ViewportCommands.Rotate"/>
+                <MouseBinding Gesture="MiddleClick" Command="hx:ViewportCommands.Zoom"/>
+                <MouseBinding Gesture="LeftClick" Command="hx:ViewportCommands.Pan"/>
+            </hx:Viewport3DX.InputBindings>
+
+            <hx:AmbientLight3D     Color="{Binding AmbientLightColor}"/>
+            <hx:DirectionalLight3D Color="{Binding Light1Color}" IsRendering="{Binding RenderLight1}" Direction="{Binding Light1Direction}" DirectionTransform="{Binding Light1DirectionTransform}"/>
+            <hx:PointLight3D       Color="{Binding Light2Color}" IsRendering="{Binding RenderLight2}" Attenuation="{Binding Light2Attenuation}" Transform="{Binding Light2Transform}"/>
+            <hx:PointLight3D       Color="{Binding Light3Color}" IsRendering="{Binding RenderLight3}" Attenuation="{Binding Light3Attenuation}" Transform="{Binding Light3Transform}"/>
+            <hx:SpotLight3D        Color="{Binding Light4Color}" IsRendering="{Binding RenderLight4}" Attenuation="{Binding Light4Attenuation}" Transform="{Binding Light4Transform}" Direction="{Binding Light4Direction}" DirectionTransform="{Binding Light4DirectionTransform}"/>
+
+            <hx:GroupModel3D x:Name="groupModelViewer" ItemsSource="{Binding Model,UpdateSourceTrigger=PropertyChanged}"></hx:GroupModel3D>
+        </hx:Viewport3DX>
 
 
         <Button x:Name="BtnLoad" Content="Load" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Click="BtnLoad_Click" />

@@ -30,35 +30,35 @@ namespace _3DModel
             InitializeComponent();
             Loaded += MainWindow_Loaded;
             UserStickers = new ObservableCollection<Sticker>();
-            ModelManager.Instance.MinCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
-            ModelManager.Instance.MaxCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
+
+            this.DataContext = ModelManager.Instance.ViewModel;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            viewer.ZoomExtents();
+            //viewer.ZoomExtents();
         }
 
-        private System.Windows.Media.Media3D.Model3D DisplayDesign(string modelPath)
-        {
-            System.Windows.Media.Media3D.Model3D device = null;
+        //private System.Windows.Media.Media3D.Model3D DisplayDesign(string modelPath)
+        //{
+            //System.Windows.Media.Media3D.Model3D device = null;
 
-            try
-            {
-                viewer.RotateGesture = new MouseGesture(MouseAction.RightClick);
+            //try
+            //{
+            //    viewer.RotateGesture = new MouseGesture(MouseAction.RightClick);
 
-                ModelImporter model = new ModelImporter();
+            //    ModelImporter model = new ModelImporter();
 
-                device = model.Load(modelPath); 
-            }
-            catch (Exception e)
-            {
-                // Handle exception in case can not find the 3D model file
-                MessageBox.Show("Exception Error : " + e.StackTrace);
-            }
+            //    device = model.Load(modelPath); 
+            //}
+            //catch (Exception e)
+            //{
+            //    // Handle exception in case can not find the 3D model file
+            //    MessageBox.Show("Exception Error : " + e.StackTrace);
+            //}
 
-            return device;
-        }
+            //return device;
+        //}
 
         private void BtnLoad_Click(object sender, RoutedEventArgs e)
         {
@@ -77,7 +77,7 @@ namespace _3DModel
 
         private void BtnReset_Click(object sender, RoutedEventArgs e)
         {
-            viewer.Children.Clear();
+            //viewer.Children.Clear();
         }
 
         private void viewer_MouseMove(object sender, MouseEventArgs e)
@@ -138,49 +138,17 @@ namespace _3DModel
         private void Reset()
         {
             ModelManager.Instance.ResetModel();
-            viewer.Children.Clear();
-            ModelManager.Instance.MinCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
-            ModelManager.Instance.MaxCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
         }
 
         private void LoadIFCFile(string filePath)
         {
             Reset();
             ModelManager.Instance.LoadModel(filePath);
-            InitModel();
+            ModelManager.Instance.InitModel();
+            ModelManager.Instance.ZoomExtent(this.viewer);
+            this.viewer.ReAttach();
         }
 
-        private void InitModel()
-        {
-            Vector3 center = new Vector3(
-                (ModelManager.Instance.MinCorner[0] + ModelManager.Instance.MaxCorner[0]) / 2 , 
-                (ModelManager.Instance.MinCorner[1] + ModelManager.Instance.MaxCorner[1]) / 2 , 
-                (ModelManager.Instance.MinCorner[2] + ModelManager.Instance.MaxCorner[2]) / 2);
 
-
-
-            ModelManager.Instance.CreateMeshes(center);
-            ModelManager.Instance.CreateWireFrames(center);
-
-            if (ModelManager.Instance.IfcObject.ModelElementCollection.Count > 0 &&
-                ModelManager.Instance.IfcObject.ModelLineCollection.Count > 0)
-            {
-                foreach (var item in ModelManager.Instance.IfcObject.ModelElementCollection)
-                {
-                    viewer.Children.Add(item);
-                }
-
-                foreach (var item in ModelManager.Instance.IfcObject.ModelLineCollection)
-                {
-                    viewer.Children.Add(item);
-                }
-            }
-
-            var lights = new DefaultLights();
-            viewer.Children.Add(lights);
-
-            var bound = viewer.Children.FindBounds();
-            viewer.ZoomExtents(bound);
-        }
     }
 }
