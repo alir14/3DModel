@@ -128,12 +128,12 @@ namespace _3DModel.Managers
 
         private void CreateMeshes(Vector3 center)
         {
-            IfcObject.CreateFaceModelsRecursive_WPFtyle(this.IfcObject.RootItem, center);
+            IfcObject.CreateFaceModelsRecursive(this.IfcObject.RootItem, center);
         }
 
         private void CreateWireFrames(Vector3 center)
         {
-            IfcObject.CreateWireFrameModelsRecursive_WPFStyle(this.IfcObject.RootItem, center); 
+            IfcObject.CreateWireFrameModelsRecursive(this.IfcObject.RootItem, center); 
         }
 
         private IFCType GetIfcType(string path)

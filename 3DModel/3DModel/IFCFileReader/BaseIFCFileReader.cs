@@ -14,33 +14,16 @@ namespace _3DModel.IFCFileReader
 {
     public abstract class BaseIFCFileReader
     {
-        public IFCItem RootItem;
+        IntPtr IfcObjectInstances, NumberIfcObjectInstance;
+        Material DefaultMaterial = PhongMaterials.Bronze;
+        System.Windows.Media.Color DefaultLineColor = System.Windows.Media.Color.FromRgb(0, 0, 0);
+        Element3DCollection model;
+        Dictionary<MeshGeometryModel3D, IFCItem> MeshToIfcItems;
 
         protected string Path { get; set; }
         protected IntPtr IfcModel { get; set; }
 
-        IntPtr IfcObjectInstances, NumberIfcObjectInstance;
-        Material DefaultMaterial = PhongMaterials.Bronze;
-        System.Windows.Media.Color DefaultLineColor = System.Windows.Media.Color.FromRgb(0, 0, 0);
-        //List<MeshGeometryVisual3D> modelElementCollection = new List<MeshGeometryVisual3D>();
-        //List<LinesVisual3D> modelLineCollection = new List<LinesVisual3D>();
-        Element3DCollection model = new Element3DCollection();
-        Dictionary<MeshGeometryModel3D, IFCItem> MeshToIfcItems = new Dictionary<MeshGeometryModel3D, IFCItem>();
-
-        //public List<LinesVisual3D> ModelLineCollection
-        //{
-        //    get
-        //    {
-        //        return modelLineCollection;
-        //    }
-        //}
-        //public List<MeshGeometryVisual3D> ModelElementCollection
-        //{
-        //    get
-        //    {
-        //        return modelElementCollection;
-        //    }
-        //}
+        public IFCItem RootItem;
         public Element3DCollection Model
         {
             get
@@ -48,10 +31,11 @@ namespace _3DModel.IFCFileReader
                 return model;
             }
         }
-
         public BaseIFCFileReader(string path)
         {
             this.Path = path;
+            model = new Element3DCollection();
+            MeshToIfcItems = new Dictionary<MeshGeometryModel3D, IFCItem>();
         }
 
         // should override
@@ -59,61 +43,7 @@ namespace _3DModel.IFCFileReader
         {
         }
 
-        public void CreateFaceModelsRecursive_WinFrmStyle(IFCItem item, Vector3 center)
-        {
-            //while (item != null)
-            //{
-            //    if (item.ifcID != IntPtr.Zero && item.noVerticesForFaces != 0 && item.noPrimitivesForFaces != 0)
-            //    {
-            //        var positions = new System.Windows.Media.Media3D.Point3DCollection();
-            //        var normals = new System.Windows.Media.Media3D.Vector3DCollection();
-
-            //        if (item.verticesForFaces != null)
-            //        {
-            //            for (int i = 0; i < item.noVerticesForFaces; i++)
-            //            {
-            //                positions.Add(new System.Windows.Media.Media3D.Point3D(item.verticesForFaces[6 * i + 0] - center.X,
-            //                    item.verticesForFaces[6 * i + 1] - center.Y, item.verticesForFaces[6 * i + 2] - center.Z));
-
-            //                normals.Add(new System.Windows.Media.Media3D.Vector3D(item.verticesForFaces[6 * i + 3],
-            //                    item.verticesForFaces[6 * i + 4], item.verticesForFaces[6 * i + 5]));
-            //            }
-            //        }
-
-            //        var indices = new System.Windows.Media.Int32Collection();
-            //        if (item.indicesForFaces != null)
-            //        {
-            //            for (int i = 0; i < 3 * item.noPrimitivesForFaces; i++)
-            //            {
-            //                indices.Add(item.indicesForFaces[i]);
-            //            }
-            //        }
-
-            //        var meshGeometry = new System.Windows.Media.Media3D.MeshGeometry3D
-            //        {
-            //            Positions = positions,
-            //            Normals = normals,
-            //            TriangleIndices = indices
-            //        };
-
-            //        var mesh = new HelixToolkit.Wpf.MeshGeometryVisual3D() { MeshGeometry = meshGeometry };
-
-            //        item.Mesh3d = mesh;
-
-            //        //MeshToIfcItems[mesh] = item;
-
-            //        FillMeshByIfcColor_WinForm(item);
-
-            //        modelElementCollection.Add(mesh);
-            //    }
-
-            //    CreateFaceModelsRecursive_WinFrmStyle(item.child, center);
-
-            //    item = item.next;
-            //}
-        }
-
-        public void CreateFaceModelsRecursive_WPFtyle(IFCItem item, Vector3 center)
+        public void CreateFaceModelsRecursive(IFCItem item, Vector3 center)
         {
             while (item != null)
             {
@@ -165,65 +95,13 @@ namespace _3DModel.IFCFileReader
                     model.Add(mesh);
                 }
 
-                CreateFaceModelsRecursive_WPFtyle(item.child, center);
+                CreateFaceModelsRecursive(item.child, center);
 
                 item = item.next;
             }
         }
 
-        public void CreateWireFrameModelsRecursive_WinFrmStyle(IFCItem item, Vector3 center)
-        {
-            //while (item != null)
-            //{
-            //    if (item.ifcID != IntPtr.Zero && item.noVerticesForWireFrame != 0 && item.noPrimitivesForWireFrame != 0)
-            //    {
-            //        var points = new System.Windows.Media.Media3D.Point3DCollection();
-            //        System.Windows.Media.Media3D.Point3DCollection positions;
-
-            //        if (item.verticesForWireFrame != null)
-            //        {
-            //            for (int i = 0; i < item.noVerticesForWireFrame; i++)
-            //            {
-            //                points.Add(new System.Windows.Media.Media3D.Point3D(
-            //                    (item.verticesForWireFrame[3 * i + 0] - center.X),
-            //                    (item.verticesForWireFrame[3 * i + 1] - center.Y),
-            //                    (item.verticesForWireFrame[3 * i + 2] - center.Z)));
-            //            }
-            //        }
-
-            //        if (item.indicesForWireFrameLineParts != null)
-            //        {
-            //            positions = new System.Windows.Media.Media3D.Point3DCollection();
-            //            for (int i = 0; i < item.noPrimitivesForWireFrame; i++)
-            //            {
-            //                var idx = item.indicesForWireFrameLineParts[2 * i + 0];
-            //                positions.Add(points[idx]);
-            //                idx = item.indicesForWireFrameLineParts[2 * i + 1];
-            //                positions.Add(points[idx]);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            positions = points;
-            //        }
-
-            //        var wireframe = new HelixToolkit.Wpf.LinesVisual3D()
-            //        {
-            //            Points = positions,
-            //            Color = DefaultLineColor
-            //        };
-            //        item.Wireframe = wireframe;
-
-            //        modelLineCollection.Add(wireframe);
-            //    }
-
-            //    CreateWireFrameModelsRecursive_WinFrmStyle(item.child, center);
-
-            //    item = item.next;
-            //}
-        }
-
-        public void CreateWireFrameModelsRecursive_WPFStyle(IFCItem item, Vector3 center)
+        public void CreateWireFrameModelsRecursive(IFCItem item, Vector3 center)
         {
             while (item != null)
             {
@@ -282,7 +160,7 @@ namespace _3DModel.IFCFileReader
                     model.Add(line);
                 }
 
-                CreateWireFrameModelsRecursive_WPFStyle(item.child, center);
+                CreateWireFrameModelsRecursive(item.child, center);
 
                 item = item.next;
             }
@@ -516,7 +394,6 @@ namespace _3DModel.IFCFileReader
                 byte[] colorValue = new byte[4];
                 rand.NextBytes(colorValue);
 
-                //var ifcColor = item.ifcTreeItem.ifcColor;
                 var color = System.Windows.Media.Color.FromArgb(
                     (byte)(255 - colorValue[0] * 255), 
                     (byte)(colorValue[1] * 255), 
@@ -532,26 +409,6 @@ namespace _3DModel.IFCFileReader
                     SpecularColor = color.ToColor4(),
                 };
             }
-            else
-            {
-                item.Mesh3d.Material = PhongMaterials.Bronze;
-            }
-        }
-
-        private void FillMeshByIfcColor_WinForm(IFCItem item)
-        {
-            //if (item.Mesh3d != null)
-            //{
-            //    var ifcColor = item.ifcTreeItem.ifcColor;
-            //    var color = System.Windows.Media.Color.FromArgb((byte)(255 - ifcColor.A * 255),
-            //        (byte)(ifcColor.R * 255), (byte)(ifcColor.G * 255), (byte)(ifcColor.B * 255));
-            //    item.Mesh3d.Fill = new SolidColorBrush(color);
-            //}
-            //else
-            //{
-            //    item.Mesh3d.Fill = _defaultBrush;
-            //}
-
         }
 
     }
