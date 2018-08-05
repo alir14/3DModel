@@ -102,7 +102,6 @@
     <Compile Include="IFC\IFCItem.cs" />
     <Compile Include="IFC\IFCItemColor.cs" />
     <Compile Include="IFC\IFCTreeItem.cs" />
-    <Compile Include="ViewModel\ElementEntity.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="Managers\ModelManager.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />
