@@ -6,6 +6,7 @@ using _3DModel.ViewModel;
 using _3DModel.IFCFileReader;
 using System.Windows.Controls;
 using HelixToolkit.Wpf.SharpDX;
+using System.Collections.Generic;
 using System.Windows.Media.Media3D;
 using System.Runtime.InteropServices;
 
@@ -110,11 +111,17 @@ namespace _3DModel.Managers
         public void ResetModel()
         {
             if(this.IfcObject != null)
+            {
                 this.IfcObject.RootItem = null;
+                this.IfcObject.MeshToIfcItems = new Dictionary<MeshGeometryModel3D, IFCItem>();
+            }
+
+            viewModel.Model = new Element3DCollection();
 
             HoverIfcItem = null;
-
             SelectedIfcItem = null;
+            minCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
+            maxCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
         }
 
         public void InitModel()

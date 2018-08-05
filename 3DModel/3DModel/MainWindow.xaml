@@ -42,9 +42,7 @@
                 <hx:GroupModel3D x:Name="groupModelViewer" ItemsSource="{Binding Model,UpdateSourceTrigger=PropertyChanged}"></hx:GroupModel3D>
             </hx:Viewport3DX>
             
-            <TextBox x:Name="txtModelPath" Grid.Column="0" HorizontalAlignment="Left" Height="23" Margin="5,34,0,0" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Top" Width="290"/>
             <Button x:Name="BtnBrows" Content="Browse" Grid.Column="0" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnBrows_Click"/>
-            <Button x:Name="BtnReset" Content="BtnReset" Grid.Column="0" HorizontalAlignment="Left" Margin="84.8,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnReset_Click"/>
 
             <TreeView x:Name="ElementObjectTree" Opacity="0.75"
                       Grid.Column="0" HorizontalAlignment="Left"

@@ -23,46 +23,26 @@ namespace _3DModel
 
         public Sticker UserSticker { get; set; }
 
-        //public Point3D? StickerPoint { get; set; }
-
         public MainWindow()
         {
             InitializeComponent();
-            Loaded += MainWindow_Loaded;
+
+            viewer.MouseMove += Viewer_MouseMove;
+            viewer.MouseUp += Viewer_MouseUp;
+
             UserStickers = new ObservableCollection<Sticker>();
 
             this.DataContext = ModelManager.Instance.ViewModel;
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void Viewer_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            //viewer.ZoomExtents();
+            //throw new NotImplementedException();
         }
 
-        //private System.Windows.Media.Media3D.Model3D DisplayDesign(string modelPath)
-        //{
-            //System.Windows.Media.Media3D.Model3D device = null;
-
-            //try
-            //{
-            //    viewer.RotateGesture = new MouseGesture(MouseAction.RightClick);
-
-            //    ModelImporter model = new ModelImporter();
-
-            //    device = model.Load(modelPath); 
-            //}
-            //catch (Exception e)
-            //{
-            //    // Handle exception in case can not find the 3D model file
-            //    MessageBox.Show("Exception Error : " + e.StackTrace);
-            //}
-
-            //return device;
-        //}
-
-        private void BtnLoad_Click(object sender, RoutedEventArgs e)
+        private void Viewer_MouseMove(object sender, MouseEventArgs e)
         {
-            
+            //throw new NotImplementedException();
         }
 
         private void BtnBrows_Click(object sender, RoutedEventArgs e)
@@ -71,40 +51,35 @@ namespace _3DModel
 
             if(openFileDialog.ShowDialog() == true)
             {
-                txtModelPath.Text = openFileDialog.FileName;
                 if(!string.IsNullOrEmpty(openFileDialog.FileName))
                 {
-                    LoadIFCFile(txtModelPath.Text);
+                    LoadIFCFile(openFileDialog.FileName);
                 }
             }
         }
-
-        private void BtnReset_Click(object sender, RoutedEventArgs e)
-        {
-            //viewer.Children.Clear();
-        }
-
-        private void viewer_MouseMove(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void viewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-        }
-
-        //private void Button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    myPopup.IsOpen = true;
-        //}
 
         private void BtnClose_Click (object sender, RoutedEventArgs e)
         {
 
         }
 
+        private void btnLoadPopUpClose_Click1(object sender, RoutedEventArgs e)
+        {
+            loadPopup.IsOpen = false;
+        }
+
+        private void LoadIFCFile(string filePath)
+        {
+            ModelManager.Instance.ResetModel();
+            ModelManager.Instance.LoadModel(filePath, ElementObjectTree);
+            ModelManager.Instance.InitModel();
+            ModelManager.Instance.ZoomExtent(this.viewer);
+            this.viewer.ReAttach();
+        }
+
         private void ShowDetail()
         {
-            if(this.UserSticker != null)
+            if (this.UserSticker != null)
             {
                 loadPopup.PopupAnimation = PopupAnimation.Fade;
 
@@ -133,26 +108,6 @@ namespace _3DModel
                 loadPopup.IsOpen = true;
             }
         }
-
-        private void btnLoadPopUpClose_Click1(object sender, RoutedEventArgs e)
-        {
-            loadPopup.IsOpen = false;
-        }
-
-        private void Reset()
-        {
-            ModelManager.Instance.ResetModel();
-        }
-
-        private void LoadIFCFile(string filePath)
-        {
-            Reset();
-            ModelManager.Instance.LoadModel(filePath, ElementObjectTree);
-            ModelManager.Instance.InitModel();
-            ModelManager.Instance.ZoomExtent(this.viewer);
-            this.viewer.ReAttach();
-        }
-
 
     }
 }

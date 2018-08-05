@@ -18,7 +18,7 @@ namespace _3DModel.IFCFileReader
         Material DefaultMaterial = PhongMaterials.Bronze;
         System.Windows.Media.Color DefaultLineColor = System.Windows.Media.Color.FromRgb(0, 0, 0);
         Element3DCollection model;
-        Dictionary<MeshGeometryModel3D, IFCItem> MeshToIfcItems;
+        Dictionary<MeshGeometryModel3D, IFCItem> meshToIfcItems;
 
         protected string Path { get; set; }
         protected IntPtr IfcModel { get; set; }
@@ -35,7 +35,18 @@ namespace _3DModel.IFCFileReader
         {
             this.Path = path;
             model = new Element3DCollection();
-            MeshToIfcItems = new Dictionary<MeshGeometryModel3D, IFCItem>();
+            meshToIfcItems = new Dictionary<MeshGeometryModel3D, IFCItem>();
+        }
+        public Dictionary<MeshGeometryModel3D, IFCItem> MeshToIfcItems
+        {
+            get
+            {
+                return meshToIfcItems;
+            }
+            set
+            {
+                meshToIfcItems = value;
+            }
         }
 
         // should override
@@ -87,7 +98,7 @@ namespace _3DModel.IFCFileReader
 
                     MeshGeometryModel3D mesh = new MeshGeometryModel3D() { Geometry = meshGeometry };
                     item.Mesh3d = mesh;
-                    MeshToIfcItems[mesh] = item;
+                    meshToIfcItems[mesh] = item;
 
                     FillMeshByIfcColor(item);
 
