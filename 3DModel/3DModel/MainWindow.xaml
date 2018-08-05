@@ -44,10 +44,21 @@
             
             <Button x:Name="BtnBrows" Content="Browse" Grid.Column="0" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnBrows_Click"/>
 
-            <TreeView x:Name="ElementObjectTree" Opacity="0.75"
-                      Grid.Column="0" HorizontalAlignment="Left"
-                      VerticalAlignment="Top" Margin="5,78,0,0"
-                      ></TreeView>
+            <StackPanel Grid.Column="0" HorizontalAlignment="Left" Name="DetailSection" Visibility="Hidden" 
+                    VerticalAlignment="Top" Margin="5,50,0,0" Orientation="Vertical">
+
+            <TreeView x:Name="ElementObjectTree" Opacity="0.75" Visibility="Hidden"></TreeView>
+
+            <TextBlock Width="210" Name="txtItemTitle"></TextBlock>
+            <TextBlock Width="210" Name="txtItemPoint3D"></TextBlock>
+            <TextBlock Width="210" Name="txtItemPosition"></TextBlock>
+            <TextBlock Width="210" Name="txtItemGlobalId"></TextBlock>
+            <TextBox Width="210" Name="txtItemComment" Height="150" ></TextBox>
+            <Button Width="210" Name="btnCapture" Content="Capture Image" Click="btnCapture_Click"></Button>
+            <Image Width="200" Name="selectedImage" Height="200"/>
+            <Button Width="210" Name="btnAttachFile" Content="Attach" Click="btnAttachFile_Click"></Button>
+
+        </StackPanel>
             
             <Popup Name="myPopup" Placement="Mouse"
                HorizontalOffset="-100"

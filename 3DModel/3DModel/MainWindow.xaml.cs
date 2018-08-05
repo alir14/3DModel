@@ -46,6 +46,12 @@ namespace _3DModel
                     out HelixToolkit.Wpf.SharpDX.Model3D model))
                 {
                     ModelManager.Instance.OnModelSelected(model);
+                    BindDetail(point3d, normal);
+                }
+                else
+                {
+                    DetailSection.Visibility = Visibility.Hidden;
+
                 }
             }
         }
@@ -127,5 +133,24 @@ namespace _3DModel
             }
         }
 
+        private void btnAttachFile_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnCapture_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BindDetail(System.Windows.Media.Media3D.Point3D point3d,
+                    System.Windows.Media.Media3D.Vector3D normal)
+        {
+            DetailSection.Visibility = Visibility.Visible;
+            txtItemPoint3D.Text = string.Format("{0} | {1} | {2}", point3d.X, point3d.Y, point3d.Z);
+            txtItemPosition.Text = string.Format("{0} | {1} | {2}", normal.X, normal.Y, normal.Z);
+            txtItemTitle.Text = ModelManager.Instance.SelectedIfcItem.ifcType;
+            txtItemGlobalId.Text = ModelManager.Instance.SelectedIfcItem.globalID;
+        }
     }
 }

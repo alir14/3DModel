@@ -24,7 +24,6 @@ namespace _3DModel.Managers
         HelixToolkit.Wpf.SharpDX.Material selectMaterial = PhongMaterials.Chrome;
 
         IFCItem HoverIfcItem { get; set; }
-        IFCItem SelectedIfcItem { get; set; }
         Vector3 Max
         {
             get { return new Vector3(maxCorner[0], maxCorner[1], maxCorner[2]) - Center; }
@@ -39,6 +38,7 @@ namespace _3DModel.Managers
             { return makeModelCentered ? Vector3.Zero : new Vector3(minCorner[0] + maxCorner[0], minCorner[1] + maxCorner[1], minCorner[2] + maxCorner[2]) * 0.5f; }
         }
 
+        public IFCItem SelectedIfcItem { get; set; }
         public IfcEngine IFCEngine
         {
             get
