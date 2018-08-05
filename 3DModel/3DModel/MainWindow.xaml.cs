@@ -1,5 +1,6 @@
 ﻿using System;
 using SharpDX;
+using System.IO;
 using System.Windows;
 using Microsoft.Win32;
 using HelixToolkit.Wpf;
@@ -7,6 +8,7 @@ using _3DModel.Managers;
 using System.Windows.Media;
 using System.Windows.Input;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
 using System.Windows.Controls.Primitives;
 
@@ -140,17 +142,49 @@ namespace _3DModel
 
         private void btnCapture_Click(object sender, RoutedEventArgs e)
         {
-
+            selectedImage.Source = CaptureImage(viewer, 10, 30);
         }
 
         private void BindDetail(System.Windows.Media.Media3D.Point3D point3d,
                     System.Windows.Media.Media3D.Vector3D normal)
         {
             DetailSection.Visibility = Visibility.Visible;
+            selectedImage.Source = null;
             txtItemPoint3D.Text = string.Format("{0} | {1} | {2}", point3d.X, point3d.Y, point3d.Z);
             txtItemPosition.Text = string.Format("{0} | {1} | {2}", normal.X, normal.Y, normal.Z);
             txtItemTitle.Text = ModelManager.Instance.SelectedIfcItem.ifcType;
             txtItemGlobalId.Text = ModelManager.Instance.SelectedIfcItem.globalID;
+        }
+
+        private BitmapImage CaptureImage(UIElement element, double scale, int quality)
+        {
+            var result = new BitmapImage();
+
+            Brush sourceBrush = Brushes.Black;
+            double actualWidth = element.RenderSize.Width;
+            double actualHeight = element.RenderSize.Height;
+
+            double renderWidth = actualWidth * scale;
+            double renderHeight = ActualHeight * scale;
+
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)actualWidth, (int)actualHeight, 96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Render(element);
+            PngBitmapEncoder pngImage = new PngBitmapEncoder();
+            pngImage.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+            
+            using (var stream = new MemoryStream())
+            {
+                pngImage.Save(stream);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                result.BeginInit();
+                result.CacheOption = BitmapCacheOption.OnLoad;
+                result.StreamSource = stream;
+                result.EndInit();
+            }
+
+            return result;
         }
     }
 }

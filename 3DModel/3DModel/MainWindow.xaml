@@ -66,7 +66,7 @@
                AllowsTransparency="True" Width="200" Height="200">
                 <Grid>
                     <TextBlock Name="myPopupText" Background="LightBlue" Foreground="Blue">
-                Sticket Comment
+                        Sticket Comment
                     </TextBlock>
                     <TextBox x:Name="txtUserComment" TextWrapping="Wrap" Text="" Width="190" Margin="5,23,5,38"/>
                     <Button x:Name="BtnClose" Content="Close" Width="75" Height="23" Click="BtnClose_Click" Margin="115,167,10,10"/>

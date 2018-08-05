@@ -165,5 +165,8 @@
     <Content Include="x64\d3dcompiler_47.dll" />
     <Content Include="x86\d3dcompiler_47.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="OutputImage\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
