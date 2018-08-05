@@ -17,6 +17,8 @@ namespace _3DModel.IFC
 
         Dictionary<string, bool> checkedElementsDictionary = new Dictionary<string, bool>();
 
+        public string ModelName { get; set; }
+
         public IFCTreeData(IfcEngine engine, IntPtr model, IFCItem item, TreeView treeviewControl)
         {
             IFCEngine = engine;
@@ -70,6 +72,7 @@ namespace _3DModel.IFC
             // Name
             IFCEngine.GetSPFFHeaderItem(IfcModel, 2, 0, IfcEngine.SdaiType.Unicode, out IntPtr name);
 
+            this.ModelName = Marshal.PtrToStringUni(name);
             var tnName = new TreeViewItem() { Header = "Name = '" + Marshal.PtrToStringUni(name) + "'" };
             tnHeaderInfo.Items.Add(tnName);
 

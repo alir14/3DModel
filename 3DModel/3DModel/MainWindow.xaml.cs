@@ -3,11 +3,14 @@ using SharpDX;
 using System.IO;
 using System.Windows;
 using Microsoft.Win32;
+using _3DModel.Entity;
 using HelixToolkit.Wpf;
 using _3DModel.Managers;
 using System.Windows.Media;
 using System.Windows.Input;
+using _3DModel.DataComponent;
 using System.Windows.Controls;
+using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
 using System.Windows.Controls.Primitives;
@@ -20,6 +23,8 @@ namespace _3DModel
     public partial class MainWindow : Window
     {
         Popup loadPopup = new Popup();
+        BitmapImage selectedBitmap = null;
+        List<string> lstAttachedFile = new List<string>();
 
         public ObservableCollection<Sticker> UserStickers { get; set; }
 
@@ -29,7 +34,6 @@ namespace _3DModel
         {
             InitializeComponent();
 
-            viewer.MouseMove += Viewer_MouseMove;
             viewer.MouseUp += Viewer_MouseUp;
 
             UserStickers = new ObservableCollection<Sticker>();
@@ -48,7 +52,7 @@ namespace _3DModel
                     out HelixToolkit.Wpf.SharpDX.Model3D model))
                 {
                     ModelManager.Instance.OnModelSelected(model);
-                    BindDetail(point3d, normal);
+                    BindDetail();
                 }
                 else
                 {
@@ -58,22 +62,11 @@ namespace _3DModel
             }
         }
 
-        private void Viewer_MouseMove(object sender, MouseEventArgs e)
-        {
-            var point = Mouse.GetPosition(viewer);
-
-            if (HelixToolkit.Wpf.SharpDX.ViewportExtensions.FindNearest(viewer, point,
-                out System.Windows.Media.Media3D.Point3D point3d,
-                out System.Windows.Media.Media3D.Vector3D normal,
-                out HelixToolkit.Wpf.SharpDX.Model3D model))
-            {
-                //ModelManager.Instance.OnModelHovered(model);
-            }
-        }
-
         private void BtnBrows_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            ResetControl();
 
             if(openFileDialog.ShowDialog() == true)
             {
@@ -137,23 +130,56 @@ namespace _3DModel
 
         private void btnAttachFile_Click(object sender, RoutedEventArgs e)
         {
-
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (!string.IsNullOrEmpty(openFileDialog.FileName))
+                {
+                    lstAttachedFile.Add(openFileDialog.FileName);
+                    lstAttachedName.ItemsSource = lstAttachedFile;
+                }
+            }
         }
 
         private void btnCapture_Click(object sender, RoutedEventArgs e)
         {
-            selectedImage.Source = CaptureImage(viewer, 10, 30);
+            selectedBitmap = CaptureImage(viewer, 10, 30);
+            selectedImage.Source = selectedBitmap;
         }
 
-        private void BindDetail(System.Windows.Media.Media3D.Point3D point3d,
-                    System.Windows.Media.Media3D.Vector3D normal)
+        private void BindDetail()
         {
-            DetailSection.Visibility = Visibility.Visible;
-            selectedImage.Source = null;
-            txtItemPoint3D.Text = string.Format("{0} | {1} | {2}", point3d.X, point3d.Y, point3d.Z);
-            txtItemPosition.Text = string.Format("{0} | {1} | {2}", normal.X, normal.Y, normal.Z);
-            txtItemTitle.Text = ModelManager.Instance.SelectedIfcItem.ifcType;
-            txtItemGlobalId.Text = ModelManager.Instance.SelectedIfcItem.globalID;
+            try
+            {
+
+                DetailSection.Visibility = Visibility.Visible;
+
+                var entity = DataKeeper.Instance.ReadData(ModelManager.Instance.ModelName,
+                    ModelManager.Instance.SelectedIfcItem.globalID);
+
+                txtItemModelName.Text = ModelManager.Instance.ModelName;
+                txtItemTitle.Text = ModelManager.Instance.SelectedIfcItem.ifcType;
+                txtItemGlobalId.Text = ModelManager.Instance.SelectedIfcItem.globalID;
+
+                if (entity != null)
+                {
+                    txtItemComment.Text = entity.SelectedItemComment;
+                    selectedImage.Source = entity.CapturedImage;
+                    lstAttachedName.ItemsSource = entity.AttachedFileNames;
+                }
+                else
+                {
+                    txtItemComment.Text = "";
+                    selectedImage.Source = null;
+                    lstAttachedFile = new List<string>();
+                    lstAttachedName.ItemsSource = null;
+
+                }
+            }
+            catch
+            {
+
+            }
         }
 
         private BitmapImage CaptureImage(UIElement element, double scale, int quality)
@@ -186,5 +212,33 @@ namespace _3DModel
 
             return result;
         }
+
+        private void ResetControl()
+        {
+            DetailSection.Visibility = Visibility.Hidden;
+            selectedBitmap = null;
+            selectedImage.Source = null;
+            txtItemModelName.Text = "";
+            txtItemTitle.Text = "";
+            txtItemGlobalId.Text = "";
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            var item = new ModelEntity()
+            {
+                Id = Guid.NewGuid(),
+                CapturedImage = selectedBitmap,
+                SelectedItemComment = txtItemComment.Text,
+                SelectedItemId = txtItemGlobalId.Text,
+                ModelName = txtItemModelName.Text,
+                SelectedItemTitle = txtItemTitle.Text,
+                AttachedFileNames = lstAttachedFile
+            };
+
+            DataKeeper.Instance.Save(item);
+        }
+
+        
     }
 }

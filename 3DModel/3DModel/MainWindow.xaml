@@ -49,14 +49,15 @@
 
             <TreeView x:Name="ElementObjectTree" Opacity="0.75" Visibility="Hidden"></TreeView>
 
+            <Button Width="210" Name="btnSave" Content="Save Comment" Click="btnSave_Click"></Button>
+            <TextBlock Width="210" Name="txtItemModelName"></TextBlock>
             <TextBlock Width="210" Name="txtItemTitle"></TextBlock>
-            <TextBlock Width="210" Name="txtItemPoint3D"></TextBlock>
-            <TextBlock Width="210" Name="txtItemPosition"></TextBlock>
             <TextBlock Width="210" Name="txtItemGlobalId"></TextBlock>
             <TextBox Width="210" Name="txtItemComment" Height="150" ></TextBox>
             <Button Width="210" Name="btnCapture" Content="Capture Image" Click="btnCapture_Click"></Button>
-            <Image Width="200" Name="selectedImage" Height="200"/>
+            <Image Width="210" Name="selectedImage" Height="200"/>
             <Button Width="210" Name="btnAttachFile" Content="Attach" Click="btnAttachFile_Click"></Button>
+            <ListView Width="210" Name="lstAttachedName"></ListView>
 
         </StackPanel>
             

@@ -63,6 +63,7 @@ namespace _3DModel.Managers
             get { return viewModel; }
             set { viewModel = value; }
         }
+        public string ModelName { get; set; }
 
         #region singltone
 
@@ -186,6 +187,8 @@ namespace _3DModel.Managers
             var treeData = new IFCTreeData(this.ifcEngine, model, item, this.treeViewControl);
 
             treeData.BuildTree();
+
+            this.ModelName = treeData.ModelName;
         }
 
         public void OnModelHovered(HelixToolkit.Wpf.SharpDX.Model3D model)
