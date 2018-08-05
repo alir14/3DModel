@@ -188,8 +188,6 @@ namespace _3DModel.IFCFileReader
             }
             
             GenerateGeometry(this.IfcModel, RootItem);
-
-            ModelManager.Instance.IFCEngine.CloseModel(this.IfcModel);
         }
 
         private void RetrieveObjectsFromReader(string attribute)

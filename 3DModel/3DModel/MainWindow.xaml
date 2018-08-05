@@ -6,7 +6,7 @@
         xmlns:hx="http://helix-toolkit.org/wpf/SharpDX"
         xmlns:local="clr-namespace:_3DModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="Auto" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="700" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterScreen">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80*" />

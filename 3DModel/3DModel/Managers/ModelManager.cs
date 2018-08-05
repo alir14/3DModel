@@ -17,7 +17,7 @@ namespace _3DModel.Managers
         bool makeModelCentered = true;
         readonly IfcEngine ifcEngine = new IfcEngine();
         MainViewModel viewModel = new MainViewModel();
-
+        
         IFCItem HoverIfcItem { get; set; }
         IFCItem SelectedIfcItem { get; set; }
         Vector3 Max
@@ -52,6 +52,7 @@ namespace _3DModel.Managers
             get { return maxCorner; }
             set { maxCorner = value; }
         }
+        public IFCTreeData TreeData { get; set; }
 
         public MainViewModel ViewModel
         {
@@ -126,6 +127,55 @@ namespace _3DModel.Managers
             this.viewModel.Model = IfcObject.Model;
         }
 
+        public void ZoomExtent(Viewport3DX viewport, double animationTime = 200)
+        {
+            var center = new Point3D(Center.X, Center.Y, Center.Z);
+            var radius = (Max - Min).Length() * 0.5;
+            var camera = this.viewModel.Camera;
+
+            var perspectiveCam = camera as HelixToolkit.Wpf.SharpDX.PerspectiveCamera;
+            if (perspectiveCam != null)
+            {
+                perspectiveCam.FarPlaneDistance = radius * 100;
+                perspectiveCam.NearPlaneDistance = radius * 0.02;
+
+                double disth = radius / Math.Tan(0.5 * perspectiveCam.FieldOfView * Math.PI / 180);
+                double vfov = perspectiveCam.FieldOfView / viewport.ActualWidth * viewport.ActualHeight;
+                double distv = radius / Math.Tan(0.5 * vfov * Math.PI / 180);
+
+                double dist = Math.Max(disth, distv);
+                var dir = perspectiveCam.LookDirection;
+                dir.Normalize();
+                perspectiveCam.LookAt(center, dir * dist, animationTime);
+            }
+
+            var oethographicCam = camera as HelixToolkit.Wpf.SharpDX.OrthographicCamera;
+            if (oethographicCam != null)
+            {
+                oethographicCam.LookAt(center, oethographicCam.LookDirection, animationTime);
+                double newWidth = radius * 2;
+
+                if (viewport.ActualWidth > viewport.ActualHeight)
+                {
+                    newWidth = radius * 2 * viewport.ActualWidth / viewport.ActualHeight;
+                }
+
+                oethographicCam.AnimateWidth(newWidth, animationTime);
+            }
+        }
+
+        public void CloseCurrentModel(IntPtr model)
+        {
+            this.ifcEngine.CloseModel(model);
+        }
+
+        public void BuildTree(IntPtr model, IFCItem item)
+        {
+            var treeData = new IFCTreeData(this.ifcEngine, model, item);
+
+            treeData.BuildTree();
+        }
+
         private void CreateMeshes(Vector3 center)
         {
             IfcObject.CreateFaceModelsRecursive(this.IfcObject.RootItem, center);
@@ -166,41 +216,5 @@ namespace _3DModel.Managers
             return result;
         }
 
-        public void ZoomExtent(Viewport3DX viewport, double animationTime = 200)
-        {
-            var center = new Point3D(Center.X, Center.Y, Center.Z);
-            var radius = (Max - Min).Length() * 0.5;
-            var camera = this.viewModel.Camera;
-
-            var perspectiveCam = camera as HelixToolkit.Wpf.SharpDX.PerspectiveCamera;
-            if (perspectiveCam != null)
-            {
-                perspectiveCam.FarPlaneDistance = radius * 100;
-                perspectiveCam.NearPlaneDistance = radius * 0.02;
-
-                double disth = radius / Math.Tan(0.5 * perspectiveCam.FieldOfView * Math.PI / 180);
-                double vfov = perspectiveCam.FieldOfView / viewport.ActualWidth * viewport.ActualHeight;
-                double distv = radius / Math.Tan(0.5 * vfov * Math.PI / 180);
-
-                double dist = Math.Max(disth, distv);
-                var dir = perspectiveCam.LookDirection;
-                dir.Normalize();
-                perspectiveCam.LookAt(center, dir * dist, animationTime);
-            }
-
-            var oethographicCam = camera as HelixToolkit.Wpf.SharpDX.OrthographicCamera;
-            if (oethographicCam != null)
-            {
-                oethographicCam.LookAt(center, oethographicCam.LookDirection, animationTime);
-                double newWidth = radius * 2;
-
-                if (viewport.ActualWidth > viewport.ActualHeight)
-                {
-                    newWidth = radius * 2 * viewport.ActualWidth / viewport.ActualHeight;
-                }
-
-                oethographicCam.AnimateWidth(newWidth, animationTime);
-            }
-        }
     }
 }

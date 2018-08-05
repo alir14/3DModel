@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -92,6 +93,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IFC\IFCTreeData.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="IFCFileReader\BaseIFCFileReader.cs" />
@@ -100,6 +102,7 @@
     <Compile Include="IFC\IFCItem.cs" />
     <Compile Include="IFC\IFCItemColor.cs" />
     <Compile Include="IFC\IFCTreeItem.cs" />
+    <Compile Include="ViewModel\ElementEntity.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="Managers\ModelManager.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />

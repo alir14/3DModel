@@ -27,6 +27,11 @@ namespace _3DModel.IFCFileReader
                 var textReader = new XmlTextReader(Constants.XML_SETTINGS_IFC2x3);
 
                 base.ReadObjectsFromIFCFile(textReader);
+
+                ModelManager.Instance.BuildTree(base.IfcModel, base.RootItem);
+
+                ModelManager.Instance.CloseCurrentModel(base.IfcModel);
+
             }
         }
     }

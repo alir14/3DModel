@@ -21,6 +21,7 @@ namespace _3DModel
         public const string XML_SETTINGS_IFC4 = @"IFC4-Settings.xml";
         public const string ORTHOGRAPHIC_CAMERA = "Orthographic Camera";
         public const string PERSPECTIVE_CAMERA = "Perspective Camera";
+
     }
 
 }
