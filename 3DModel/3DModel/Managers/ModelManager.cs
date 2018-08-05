@@ -20,6 +20,8 @@ namespace _3DModel.Managers
         readonly IfcEngine ifcEngine = new IfcEngine();
         MainViewModel viewModel = new MainViewModel();
         TreeView treeViewControl;
+        HelixToolkit.Wpf.SharpDX.Material hoverMaterial = PhongMaterials.Violet;
+        HelixToolkit.Wpf.SharpDX.Material selectMaterial = PhongMaterials.Chrome;
 
         IFCItem HoverIfcItem { get; set; }
         IFCItem SelectedIfcItem { get; set; }
@@ -184,6 +186,46 @@ namespace _3DModel.Managers
             var treeData = new IFCTreeData(this.ifcEngine, model, item, this.treeViewControl);
 
             treeData.BuildTree();
+        }
+
+        public void OnModelHovered(HelixToolkit.Wpf.SharpDX.Model3D model)
+        {
+            if (this.HoverIfcItem != null)
+            {
+                HoverIfcItem.Mesh3d.Material = PhongMaterials.Silver;
+                HoverIfcItem = null;
+            }
+            if (model != null)
+            {
+                var mesh = (model as MeshGeometryModel3D);
+                if (mesh != null && this.IfcObject.MeshToIfcItems.ContainsKey(mesh))
+                {
+                    mesh.Material = hoverMaterial;
+                    HoverIfcItem = this.IfcObject.MeshToIfcItems[mesh];
+                }
+            }
+        }
+
+        public void OnModelSelected(HelixToolkit.Wpf.SharpDX.Model3D model)
+        {
+            if (SelectedIfcItem != null)
+            {
+                SelectedIfcItem.ifcTreeItem.treeNode.IsSelected = false;
+                SelectedIfcItem.Mesh3d.Material = PhongMaterials.Bronze;
+                SelectedIfcItem = null;
+            }
+
+            if (model != null)
+            {
+                var mesh = (model as MeshGeometryModel3D);
+                if (mesh != null && this.IfcObject.MeshToIfcItems.ContainsKey(mesh))
+                {
+                    mesh.Material = selectMaterial;
+                    SelectedIfcItem = this.IfcObject.MeshToIfcItems[mesh];
+                    SelectedIfcItem.ifcTreeItem.treeNode.IsSelected = true;
+                    SelectedIfcItem.ifcTreeItem.treeNode.Focus();
+                }
+            }
         }
 
         private void CreateMeshes(Vector3 center)

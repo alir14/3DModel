@@ -37,12 +37,30 @@ namespace _3DModel
 
         private void Viewer_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            //throw new NotImplementedException();
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                var point = Mouse.GetPosition(viewer);
+                if (HelixToolkit.Wpf.SharpDX.ViewportExtensions.FindNearest(viewer, point,
+                    out System.Windows.Media.Media3D.Point3D point3d,
+                    out System.Windows.Media.Media3D.Vector3D normal,
+                    out HelixToolkit.Wpf.SharpDX.Model3D model))
+                {
+                    ModelManager.Instance.OnModelSelected(model);
+                }
+            }
         }
 
         private void Viewer_MouseMove(object sender, MouseEventArgs e)
         {
-            //throw new NotImplementedException();
+            var point = Mouse.GetPosition(viewer);
+
+            if (HelixToolkit.Wpf.SharpDX.ViewportExtensions.FindNearest(viewer, point,
+                out System.Windows.Media.Media3D.Point3D point3d,
+                out System.Windows.Media.Media3D.Vector3D normal,
+                out HelixToolkit.Wpf.SharpDX.Model3D model))
+            {
+                //ModelManager.Instance.OnModelHovered(model);
+            }
         }
 
         private void BtnBrows_Click(object sender, RoutedEventArgs e)

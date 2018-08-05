@@ -100,7 +100,8 @@ namespace _3DModel.IFCFileReader
                     item.Mesh3d = mesh;
                     meshToIfcItems[mesh] = item;
 
-                    FillMeshByIfcColor(item);
+                    //FillMeshByIfcColor(item);
+                    FillMeshByRandomIfcColor(item);
 
                     mesh.Tag = item.ifcType + ":" + item.ifcID;
                     model.Add(mesh);
