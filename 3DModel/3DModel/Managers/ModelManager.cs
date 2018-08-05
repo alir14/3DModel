@@ -4,6 +4,7 @@ using IfcEngineCS;
 using _3DModel.IFC;
 using _3DModel.ViewModel;
 using _3DModel.IFCFileReader;
+using System.Windows.Controls;
 using HelixToolkit.Wpf.SharpDX;
 using System.Windows.Media.Media3D;
 using System.Runtime.InteropServices;
@@ -17,7 +18,8 @@ namespace _3DModel.Managers
         bool makeModelCentered = true;
         readonly IfcEngine ifcEngine = new IfcEngine();
         MainViewModel viewModel = new MainViewModel();
-        
+        TreeView treeViewControl;
+
         IFCItem HoverIfcItem { get; set; }
         IFCItem SelectedIfcItem { get; set; }
         Vector3 Max
@@ -52,7 +54,6 @@ namespace _3DModel.Managers
             get { return maxCorner; }
             set { maxCorner = value; }
         }
-        public IFCTreeData TreeData { get; set; }
 
         public MainViewModel ViewModel
         {
@@ -85,8 +86,10 @@ namespace _3DModel.Managers
         }
         #endregion
 
-        public void LoadModel(string filePath)
+        public void LoadModel(string filePath, TreeView treeView)
         {
+            this.treeViewControl = treeView;
+
             var type = GetIfcType(filePath);
 
             switch (type)
@@ -171,7 +174,7 @@ namespace _3DModel.Managers
 
         public void BuildTree(IntPtr model, IFCItem item)
         {
-            var treeData = new IFCTreeData(this.ifcEngine, model, item);
+            var treeData = new IFCTreeData(this.ifcEngine, model, item, this.treeViewControl);
 
             treeData.BuildTree();
         }

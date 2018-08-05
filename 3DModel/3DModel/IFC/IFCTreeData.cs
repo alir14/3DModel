@@ -13,29 +13,20 @@ namespace _3DModel.IFC
         IfcEngine IFCEngine;
         IntPtr IfcModel;
         IFCItem IfcRoot;
-        TreeView treeControl = new TreeView();
+        TreeView treeControl;
 
         Dictionary<string, bool> checkedElementsDictionary = new Dictionary<string, bool>();
-        ElementEntity entity = new ElementEntity();
 
-        public TreeView TreeControl
-        {
-            get
-            {
-                return treeControl;
-            }
-        }
-
-        public IFCTreeData(IfcEngine engine, IntPtr model, IFCItem item)
+        public IFCTreeData(IfcEngine engine, IntPtr model, IFCItem item, TreeView treeviewControl)
         {
             IFCEngine = engine;
             IfcModel = model;
             IfcRoot = item;
+            treeControl = treeviewControl;
         }
 
-        public void BuildTree()
+        public TreeView BuildTree()
         {
-
             if (IfcModel == IntPtr.Zero)
             {
                 throw new ArgumentException("Invalid model.");
@@ -51,6 +42,8 @@ namespace _3DModel.IFC
             CreateHeaderTreeItems();
             CreateProjectTreeItems();
             CreateNotReferencedTreeItems();
+
+            return treeControl;
         }
 
         private void CreateHeaderTreeItems()

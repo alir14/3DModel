@@ -73,7 +73,9 @@ namespace _3DModel
             {
                 txtModelPath.Text = openFileDialog.FileName;
                 if(!string.IsNullOrEmpty(openFileDialog.FileName))
+                {
                     LoadIFCFile(txtModelPath.Text);
+                }
             }
         }
 
@@ -145,7 +147,7 @@ namespace _3DModel
         private void LoadIFCFile(string filePath)
         {
             Reset();
-            ModelManager.Instance.LoadModel(filePath);
+            ModelManager.Instance.LoadModel(filePath, ElementObjectTree);
             ModelManager.Instance.InitModel();
             ModelManager.Instance.ZoomExtent(this.viewer);
             this.viewer.ReAttach();
