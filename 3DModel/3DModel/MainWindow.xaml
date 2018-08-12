@@ -6,58 +6,88 @@
         xmlns:hx="http://helix-toolkit.org/wpf/SharpDX"
         xmlns:local="clr-namespace:_3DModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" WindowState="Maximized" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#373737" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="4" Background="{TemplateBinding Background}">
+                            <Grid>
+                                <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E59400" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="OrangeRed" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Name="menuOpen" Header="_File" Click="menuOpen_Click">
+                <!--<MenuItem Header="_New" />-->
+                <MenuItem Header="_Open" />
+                <!--<MenuItem Header="_Save" />-->
+                <Separator />
+                <MenuItem Header="_Exit" />
+            </MenuItem>
+        </Menu>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="20*" />
                 <ColumnDefinition Width="80*"/>
             </Grid.ColumnDefinitions>
 
-            <hx:Viewport3DX 
-                Grid.Column="1"
+            <Border BorderThickness="2" BorderBrush="DarkGray" Grid.Column="1" Margin="0,0,5,0" >
+                <hx:Viewport3DX 
                 x:Name="viewer" Camera="{Binding Camera}"
                 TextBrush="Black" ShowCoordinateSystem="True"
                 CoordinateSystemLabelForeground="White" UseDefaultGestures="False"
                 RotateAroundMouseDownPoint="True" ModelUpDirection="0,0,1"
                 AllowDrop="True" >
-                <hx:Viewport3DX.InputBindings>
-                    <KeyBinding Key="B" Command="hx:ViewportCommands.BackView"/>
-                    <KeyBinding Key="F" Command="hx:ViewportCommands.FrontView"/>
-                    <KeyBinding Key="U" Command="hx:ViewportCommands.TopView"/>
-                    <KeyBinding Key="D" Command="hx:ViewportCommands.BottomView"/>
-                    <KeyBinding Key="L" Command="hx:ViewportCommands.LeftView"/>
-                    <KeyBinding Key="R" Command="hx:ViewportCommands.RightView"/>
-                    <KeyBinding Gesture="Control+E" Command="hx:ViewportCommands.ZoomExtents"/>
-                    <MouseBinding Gesture="RightClick" Command="hx:ViewportCommands.Rotate"/>
-                    <MouseBinding Gesture="MiddleClick" Command="hx:ViewportCommands.Zoom"/>
-                    <MouseBinding Gesture="LeftClick" Command="hx:ViewportCommands.Pan"/>
-                </hx:Viewport3DX.InputBindings>
+                    <hx:Viewport3DX.InputBindings>
+                        <KeyBinding Key="B" Command="hx:ViewportCommands.BackView"/>
+                        <KeyBinding Key="F" Command="hx:ViewportCommands.FrontView"/>
+                        <KeyBinding Key="U" Command="hx:ViewportCommands.TopView"/>
+                        <KeyBinding Key="D" Command="hx:ViewportCommands.BottomView"/>
+                        <KeyBinding Key="L" Command="hx:ViewportCommands.LeftView"/>
+                        <KeyBinding Key="R" Command="hx:ViewportCommands.RightView"/>
+                        <KeyBinding Gesture="Control+E" Command="hx:ViewportCommands.ZoomExtents"/>
+                        <MouseBinding Gesture="RightClick" Command="hx:ViewportCommands.Rotate"/>
+                        <MouseBinding Gesture="MiddleClick" Command="hx:ViewportCommands.Zoom"/>
+                        <MouseBinding Gesture="LeftClick" Command="hx:ViewportCommands.Pan"/>
+                    </hx:Viewport3DX.InputBindings>
 
-                <hx:AmbientLight3D     Color="{Binding AmbientLightColor}"/>
-                <hx:DirectionalLight3D Color="{Binding Light1Color}" IsRendering="{Binding RenderLight1}" Direction="{Binding Light1Direction}" DirectionTransform="{Binding Light1DirectionTransform}"/>
-                <hx:PointLight3D       Color="{Binding Light2Color}" IsRendering="{Binding RenderLight2}" Attenuation="{Binding Light2Attenuation}" Transform="{Binding Light2Transform}"/>
-                <hx:PointLight3D       Color="{Binding Light3Color}" IsRendering="{Binding RenderLight3}" Attenuation="{Binding Light3Attenuation}" Transform="{Binding Light3Transform}"/>
-                <hx:SpotLight3D        Color="{Binding Light4Color}" IsRendering="{Binding RenderLight4}" Attenuation="{Binding Light4Attenuation}" Transform="{Binding Light4Transform}" Direction="{Binding Light4Direction}" DirectionTransform="{Binding Light4DirectionTransform}"/>
+                    <hx:AmbientLight3D     Color="{Binding AmbientLightColor}"/>
+                    <hx:DirectionalLight3D Color="{Binding Light1Color}" IsRendering="{Binding RenderLight1}" Direction="{Binding Light1Direction}" DirectionTransform="{Binding Light1DirectionTransform}"/>
+                    <hx:PointLight3D       Color="{Binding Light2Color}" IsRendering="{Binding RenderLight2}" Attenuation="{Binding Light2Attenuation}" Transform="{Binding Light2Transform}"/>
+                    <hx:PointLight3D       Color="{Binding Light3Color}" IsRendering="{Binding RenderLight3}" Attenuation="{Binding Light3Attenuation}" Transform="{Binding Light3Transform}"/>
+                    <hx:SpotLight3D        Color="{Binding Light4Color}" IsRendering="{Binding RenderLight4}" Attenuation="{Binding Light4Attenuation}" Transform="{Binding Light4Transform}" Direction="{Binding Light4Direction}" DirectionTransform="{Binding Light4DirectionTransform}"/>
 
-                <hx:GroupModel3D x:Name="groupModelViewer" ItemsSource="{Binding Model,UpdateSourceTrigger=PropertyChanged}"></hx:GroupModel3D>
-            </hx:Viewport3DX>
-            
-            <Button x:Name="BtnBrows" Content="Browse" Grid.Column="0" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="75" Click="BtnBrows_Click"/>
+                    <hx:GroupModel3D x:Name="groupModelViewer" ItemsSource="{Binding Model,UpdateSourceTrigger=PropertyChanged}"></hx:GroupModel3D>
+                </hx:Viewport3DX>
+            </Border>
 
-            <StackPanel Grid.Column="0" HorizontalAlignment="Left" Name="DetailSection" Visibility="Hidden" 
-                    VerticalAlignment="Top" Margin="5,50,0,0" Orientation="Vertical">
-
-            <Button Width="210" Name="btnSave" Content="Save Comment" Click="btnSave_Click"></Button>
-            <Button Width="210" Name="btnCaptureImage" Content="Capture Image" Click="btnCaptureImage_Click" ></Button>
-            <TextBlock Width="210" Name="txtItemModelName"></TextBlock>
-            <TextBlock Width="210" Name="txtItemTitle"></TextBlock>
-            <TextBlock Width="210" Name="txtItemGlobalId"></TextBlock>
-            <TextBox Width="210" Name="txtItemComment" Height="150" ></TextBox>
-            <Image Width="210" Name="selectedImage" Height="200"/>
-            <ListView Width="210" Name="lstAttachedName" Height="200"></ListView>
-
-        </StackPanel>
-        <StatusBar Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <StatusBar Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                 <StatusBar.Background>
                     <SolidColorBrush Opacity="0.25" Color="WhiteSmoke"/>
                 </StatusBar.Background>
@@ -75,6 +105,43 @@
                 </StatusBarItem>
             </StatusBar>
 
+            <Border BorderThickness="2" BorderBrush="DarkGray" DockPanel.Dock="Left" >
+                <StackPanel Name="DetailSection" VerticalAlignment="Top"  Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+                    <Button Name="btnSave" Click="btnSave_Click" Height="35" Width="50">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="image/Save.jpg" Width="20" Height="20"  />
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                    <Button Name="btnCaptureImage" Click="btnCaptureImage_Click" Height="35" Width="50">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="image/CaptureImage.jpg" Width="20" Height="20" />
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                </StackPanel>
+                    <TextBlock >Model Name:</TextBlock>
+                    <TextBlock Name="txtItemModelName" Margin="0,5,0,0"></TextBlock>
+                    <TextBlock >Title:</TextBlock>
+                    <TextBlock Width="Auto" Name="txtItemTitle" Margin="0,5,0,0"></TextBlock>
+                    <TextBlock >Id:</TextBlock>
+                    <TextBlock Width="Auto" Name="txtItemGlobalId" Margin="0,5,0,0"></TextBlock>
+
+                    <TextBox HorizontalAlignment="Stretch" Name="txtItemComment" Height="150" Margin="0,5,0,0"></TextBox>
+
+                    <ListView Name="lstAttachedName" Height="200" HorizontalAlignment="Stretch" Margin="0,5,0,0"></ListView>
+                    <Image Name="selectedImage" Height="200" HorizontalAlignment="Stretch" Margin="0,5,0,0"/>
+                    
+
+            </StackPanel>
+            </Border>
+
+
         </Grid>
+
+    </DockPanel>
 
 </Window>

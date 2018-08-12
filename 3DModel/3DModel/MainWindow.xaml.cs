@@ -93,24 +93,7 @@ namespace _3DModel
                 }
                 else
                 {
-                    DetailSection.Visibility = Visibility.Hidden;
                     SelectedIfcItem = null;
-                }
-            }
-        }
-
-        private void BtnBrows_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "IFC files (*.ifc)|*.ifc";
-            ResetControl();
-
-            if(openFileDialog.ShowDialog() == true)
-            {
-                if(!string.IsNullOrEmpty(openFileDialog.FileName))
-                {
-                    ModelManager.Instance.ModelName = openFileDialog.SafeFileName;
-                    LoadIFCFile(openFileDialog.FileName);
                 }
             }
         }
@@ -134,9 +117,6 @@ namespace _3DModel
         {
             try
             {
-
-                DetailSection.Visibility = Visibility.Visible;
-
                 var entity = DataKeeper.Instance.ReadData(ModelManager.Instance.ModelName, SelectedIfcItem.globalID);
 
                 txtItemModelName.Text = ModelManager.Instance.ModelName;
@@ -186,7 +166,6 @@ namespace _3DModel
 
         private void ResetControl()
         {
-            DetailSection.Visibility = Visibility.Hidden;
             selectedBitmap = null;
             selectedImage.Source = null;
             txtItemModelName.Text = "";
@@ -216,5 +195,20 @@ namespace _3DModel
             selectedImage.Source = selectedBitmap;
         }
 
+        private void menuOpen_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "IFC files (*.ifc)|*.ifc";
+            ResetControl();
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (!string.IsNullOrEmpty(openFileDialog.FileName))
+                {
+                    ModelManager.Instance.ModelName = openFileDialog.SafeFileName;
+                    LoadIFCFile(openFileDialog.FileName);
+                }
+            }
+        }
     }
 }

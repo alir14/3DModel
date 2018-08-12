@@ -156,6 +156,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="image\CaptureImage.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="image\Save.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="sharpdx_direct3d11_1_effects_arm.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
