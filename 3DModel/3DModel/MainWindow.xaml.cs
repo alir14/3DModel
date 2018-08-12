@@ -22,21 +22,14 @@ namespace _3DModel
     /// </summary>
     public partial class MainWindow : Window
     {
-        Popup loadPopup = new Popup();
         BitmapImage selectedBitmap = null;
         List<string> lstAttachedFile = new List<string>();
-
-        public ObservableCollection<Sticker> UserStickers { get; set; }
-
-        public Sticker UserSticker { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
 
             viewer.MouseUp += Viewer_MouseUp;
-
-            UserStickers = new ObservableCollection<Sticker>();
 
             this.DataContext = ModelManager.Instance.ViewModel;
         }
@@ -82,11 +75,6 @@ namespace _3DModel
 
         }
 
-        private void btnLoadPopUpClose_Click1(object sender, RoutedEventArgs e)
-        {
-            loadPopup.IsOpen = false;
-        }
-
         private void LoadIFCFile(string filePath)
         {
             ModelManager.Instance.ResetModel();
@@ -94,38 +82,6 @@ namespace _3DModel
             ModelManager.Instance.InitModel();
             ModelManager.Instance.ZoomExtent(this.viewer);
             this.viewer.ReAttach();
-        }
-
-        private void ShowDetail()
-        {
-            if (this.UserSticker != null)
-            {
-                loadPopup.PopupAnimation = PopupAnimation.Fade;
-
-                loadPopup.Width = 200;
-                loadPopup.Height = 200;
-                loadPopup.Placement = PlacementMode.MousePoint;
-
-                Grid grid = new Grid();
-
-                TextBlock popupText = new TextBlock();
-                popupText.Text = this.UserSticker.UserMessage;
-                popupText.Background = Brushes.LightBlue;
-                popupText.Foreground = Brushes.Black;
-
-                Button btnLoadPopUpClose = new Button();
-                btnLoadPopUpClose.Width = 75;
-                btnLoadPopUpClose.Height = 23;
-                btnLoadPopUpClose.Content = "Close";
-                btnLoadPopUpClose.Click += btnLoadPopUpClose_Click1;
-
-                grid.Children.Add(popupText);
-                grid.Children.Add(btnLoadPopUpClose);
-
-                loadPopup.Child = grid;
-
-                loadPopup.IsOpen = true;
-            }
         }
 
         private void btnAttachFile_Click(object sender, RoutedEventArgs e)
