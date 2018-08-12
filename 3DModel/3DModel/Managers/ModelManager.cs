@@ -19,7 +19,8 @@ namespace _3DModel.Managers
         bool makeModelCentered = true;
         readonly IfcEngine ifcEngine = new IfcEngine();
         MainViewModel viewModel = new MainViewModel();
-
+        HelixToolkit.Wpf.SharpDX.Material originalItemColor;
+        
         IFCItem HoverIfcItem { get; set; }
         Vector3 Max
         {
@@ -199,8 +200,7 @@ namespace _3DModel.Managers
         {
             if (SelectedIfcItem != null)
             {
-                //SelectedIfcItem.ifcTreeItem.treeNode.IsSelected = false;
-                SelectedIfcItem.Mesh3d.Material = PhongMaterials.Bronze;
+                SelectedIfcItem.Mesh3d.Material = originalItemColor;
                 SelectedIfcItem = null;
             }
 
@@ -209,6 +209,7 @@ namespace _3DModel.Managers
                 var mesh = (model as MeshGeometryModel3D);
                 if (mesh != null && this.IfcObject.MeshToIfcItems.ContainsKey(mesh))
                 {
+                    originalItemColor = mesh.Material;
                     mesh.Material = PhongMaterials.Chrome;
                     SelectedIfcItem = this.IfcObject.MeshToIfcItems[mesh];
                 }
