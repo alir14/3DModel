@@ -318,7 +318,7 @@ namespace _3DModel.IFC
 
                     if (ifcTreeItem.ifcItem != null)
                     {
-                        ifcTreeItem.ifcItem.ifcTreeItem = ifcTreeItem;
+                        //ifcTreeItem.ifcItem.ifcTreeItem = ifcTreeItem;
                     }
                 } // for (int iObject = ...
             } // for (int iDecomposition = ...
@@ -359,7 +359,7 @@ namespace _3DModel.IFC
 
                     if (ifcTreeItem.ifcItem != null)
                     {
-                        ifcTreeItem.ifcItem.ifcTreeItem = ifcTreeItem;
+                        //ifcTreeItem.ifcItem.ifcTreeItem = ifcTreeItem;
 
                         GetColor(ifcTreeItem);
                     }
@@ -824,25 +824,25 @@ namespace _3DModel.IFC
             IFCItem ifcIterator = ifcParent;
             while (ifcIterator != null)
             {
-                if ((ifcIterator.ifcTreeItem == null) && (ifcIterator.ifcID != IntPtr.Zero))
-                {
-                    string strItemText = "'" + (string.IsNullOrEmpty(ifcIterator.name) ? "<name>" : ifcIterator.name) +
-                            "' = '" + (string.IsNullOrEmpty(ifcIterator.description) ? "<description>" : ifcIterator.description) +
-                            "' (" + (string.IsNullOrEmpty(ifcIterator.ifcType) ? ifcIterator.globalID : ifcIterator.ifcType) + ")";
+                //if ((ifcIterator.ifcTreeItem == null) && (ifcIterator.ifcID != IntPtr.Zero))
+                //{
+                //    string strItemText = "'" + (string.IsNullOrEmpty(ifcIterator.name) ? "<name>" : ifcIterator.name) +
+                //            "' = '" + (string.IsNullOrEmpty(ifcIterator.description) ? "<description>" : ifcIterator.description) +
+                //            "' (" + (string.IsNullOrEmpty(ifcIterator.ifcType) ? ifcIterator.globalID : ifcIterator.ifcType) + ")";
 
-                    IFCTreeItem ifcTreeItem = new IFCTreeItem();
-                    ifcTreeItem.instance = ifcIterator.ifcID;
-                    ifcTreeItem.treeNode = new TreeViewItem() { Header = strItemText };
-                    tnNotReferenced.Items.Add(ifcTreeItem.treeNode);
-                    ifcTreeItem.ifcItem = FindIFCItem(IfcRoot, ifcTreeItem);
-                    ifcIterator.ifcTreeItem = ifcTreeItem;
-                    ifcTreeItem.treeNode.Tag = ifcTreeItem;
+                //    IFCTreeItem ifcTreeItem = new IFCTreeItem();
+                //    ifcTreeItem.instance = ifcIterator.ifcID;
+                //    ifcTreeItem.treeNode = new TreeViewItem() { Header = strItemText };
+                //    tnNotReferenced.Items.Add(ifcTreeItem.treeNode);
+                //    ifcTreeItem.ifcItem = FindIFCItem(IfcRoot, ifcTreeItem);
+                //    ifcIterator.ifcTreeItem = ifcTreeItem;
+                //    ifcTreeItem.treeNode.Tag = ifcTreeItem;
 
-                    if (ifcTreeItem.ifcItem != null)
-                    {
-                        ifcTreeItem.ifcItem.ifcTreeItem = ifcTreeItem;
-                    }
-                }
+                //    if (ifcTreeItem.ifcItem != null)
+                //    {
+                //        ifcTreeItem.ifcItem.ifcTreeItem = ifcTreeItem;
+                //    }
+                //}
 
                 FindNonReferencedIFCItems(ifcIterator.child, tnNotReferenced);
 

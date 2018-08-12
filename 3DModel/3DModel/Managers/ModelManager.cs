@@ -19,9 +19,6 @@ namespace _3DModel.Managers
         bool makeModelCentered = true;
         readonly IfcEngine ifcEngine = new IfcEngine();
         MainViewModel viewModel = new MainViewModel();
-        TreeView treeViewControl;
-        HelixToolkit.Wpf.SharpDX.Material hoverMaterial = PhongMaterials.Violet;
-        HelixToolkit.Wpf.SharpDX.Material selectMaterial = PhongMaterials.Chrome;
 
         IFCItem HoverIfcItem { get; set; }
         Vector3 Max
@@ -90,10 +87,8 @@ namespace _3DModel.Managers
         }
         #endregion
 
-        public void LoadModel(string filePath, TreeView treeView)
+        public void LoadModel(string filePath)
         {
-            this.treeViewControl = treeView;
-
             var type = GetIfcType(filePath);
 
             switch (type)
@@ -182,15 +177,6 @@ namespace _3DModel.Managers
             this.ifcEngine.CloseModel(model);
         }
 
-        public void BuildTree(IntPtr model, IFCItem item)
-        {
-            var treeData = new IFCTreeData(this.ifcEngine, model, item, this.treeViewControl);
-
-            treeData.BuildTree();
-
-            this.ModelName = treeData.ModelName;
-        }
-
         public void OnModelHovered(HelixToolkit.Wpf.SharpDX.Model3D model)
         {
             if (this.HoverIfcItem != null)
@@ -203,7 +189,7 @@ namespace _3DModel.Managers
                 var mesh = (model as MeshGeometryModel3D);
                 if (mesh != null && this.IfcObject.MeshToIfcItems.ContainsKey(mesh))
                 {
-                    mesh.Material = hoverMaterial;
+                    mesh.Material = PhongMaterials.Violet;
                     HoverIfcItem = this.IfcObject.MeshToIfcItems[mesh];
                 }
             }
@@ -213,7 +199,7 @@ namespace _3DModel.Managers
         {
             if (SelectedIfcItem != null)
             {
-                SelectedIfcItem.ifcTreeItem.treeNode.IsSelected = false;
+                //SelectedIfcItem.ifcTreeItem.treeNode.IsSelected = false;
                 SelectedIfcItem.Mesh3d.Material = PhongMaterials.Bronze;
                 SelectedIfcItem = null;
             }
@@ -223,10 +209,8 @@ namespace _3DModel.Managers
                 var mesh = (model as MeshGeometryModel3D);
                 if (mesh != null && this.IfcObject.MeshToIfcItems.ContainsKey(mesh))
                 {
-                    mesh.Material = selectMaterial;
+                    mesh.Material = PhongMaterials.Chrome;
                     SelectedIfcItem = this.IfcObject.MeshToIfcItems[mesh];
-                    SelectedIfcItem.ifcTreeItem.treeNode.IsSelected = true;
-                    SelectedIfcItem.ifcTreeItem.treeNode.Focus();
                 }
             }
         }

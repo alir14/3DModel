@@ -47,8 +47,6 @@
             <StackPanel Grid.Column="0" HorizontalAlignment="Left" Name="DetailSection" Visibility="Hidden" 
                     VerticalAlignment="Top" Margin="5,50,0,0" Orientation="Vertical">
 
-            <TreeView x:Name="ElementObjectTree" Opacity="0.75" Visibility="Hidden"></TreeView>
-
             <Button Width="210" Name="btnSave" Content="Save Comment" Click="btnSave_Click"></Button>
             <TextBlock Width="210" Name="txtItemModelName"></TextBlock>
             <TextBlock Width="210" Name="txtItemTitle"></TextBlock>

@@ -78,7 +78,7 @@ namespace _3DModel
         private void LoadIFCFile(string filePath)
         {
             ModelManager.Instance.ResetModel();
-            ModelManager.Instance.LoadModel(filePath, ElementObjectTree);
+            ModelManager.Instance.LoadModel(filePath);
             ModelManager.Instance.InitModel();
             ModelManager.Instance.ZoomExtent(this.viewer);
             this.viewer.ReAttach();
@@ -195,6 +195,5 @@ namespace _3DModel
             DataKeeper.Instance.Save(item);
         }
 
-        
     }
 }
