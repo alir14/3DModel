@@ -72,7 +72,7 @@ namespace _3DModel.IFC
         public int vertexOffsetForWireFrame;
         public int indexOffsetForWireFrame;
 
-        public IFCTreeItem ifcTreeItem = null;
+        //public IFCTreeItem ifcTreeItem = null;
 
         public MeshGeometryModel3D Mesh3d;
         public LineGeometryModel3D Wireframe;

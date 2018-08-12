@@ -19,11 +19,7 @@ namespace _3DModel.Managers
         bool makeModelCentered = true;
         readonly IfcEngine ifcEngine = new IfcEngine();
         MainViewModel viewModel = new MainViewModel();
-        TreeView treeViewControl;
-        HelixToolkit.Wpf.SharpDX.Material hoverMaterial = PhongMaterials.Violet;
-        HelixToolkit.Wpf.SharpDX.Material selectMaterial = PhongMaterials.Chrome;
-
-        IFCItem HoverIfcItem { get; set; }
+        
         Vector3 Max
         {
             get { return new Vector3(maxCorner[0], maxCorner[1], maxCorner[2]) - Center; }
@@ -38,7 +34,6 @@ namespace _3DModel.Managers
             { return makeModelCentered ? Vector3.Zero : new Vector3(minCorner[0] + maxCorner[0], minCorner[1] + maxCorner[1], minCorner[2] + maxCorner[2]) * 0.5f; }
         }
 
-        public IFCItem SelectedIfcItem { get; set; }
         public IfcEngine IFCEngine
         {
             get
@@ -90,10 +85,8 @@ namespace _3DModel.Managers
         }
         #endregion
 
-        public void LoadModel(string filePath, TreeView treeView)
+        public void LoadModel(string filePath)
         {
-            this.treeViewControl = treeView;
-
             var type = GetIfcType(filePath);
 
             switch (type)
@@ -121,8 +114,6 @@ namespace _3DModel.Managers
 
             viewModel.Model = new Element3DCollection();
 
-            HoverIfcItem = null;
-            SelectedIfcItem = null;
             minCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
             maxCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
         }
@@ -180,55 +171,6 @@ namespace _3DModel.Managers
         public void CloseCurrentModel(IntPtr model)
         {
             this.ifcEngine.CloseModel(model);
-        }
-
-        public void BuildTree(IntPtr model, IFCItem item)
-        {
-            var treeData = new IFCTreeData(this.ifcEngine, model, item, this.treeViewControl);
-
-            treeData.BuildTree();
-
-            this.ModelName = treeData.ModelName;
-        }
-
-        public void OnModelHovered(HelixToolkit.Wpf.SharpDX.Model3D model)
-        {
-            if (this.HoverIfcItem != null)
-            {
-                HoverIfcItem.Mesh3d.Material = PhongMaterials.Silver;
-                HoverIfcItem = null;
-            }
-            if (model != null)
-            {
-                var mesh = (model as MeshGeometryModel3D);
-                if (mesh != null && this.IfcObject.MeshToIfcItems.ContainsKey(mesh))
-                {
-                    mesh.Material = hoverMaterial;
-                    HoverIfcItem = this.IfcObject.MeshToIfcItems[mesh];
-                }
-            }
-        }
-
-        public void OnModelSelected(HelixToolkit.Wpf.SharpDX.Model3D model)
-        {
-            if (SelectedIfcItem != null)
-            {
-                SelectedIfcItem.ifcTreeItem.treeNode.IsSelected = false;
-                SelectedIfcItem.Mesh3d.Material = PhongMaterials.Bronze;
-                SelectedIfcItem = null;
-            }
-
-            if (model != null)
-            {
-                var mesh = (model as MeshGeometryModel3D);
-                if (mesh != null && this.IfcObject.MeshToIfcItems.ContainsKey(mesh))
-                {
-                    mesh.Material = selectMaterial;
-                    SelectedIfcItem = this.IfcObject.MeshToIfcItems[mesh];
-                    SelectedIfcItem.ifcTreeItem.treeNode.IsSelected = true;
-                    SelectedIfcItem.ifcTreeItem.treeNode.Focus();
-                }
-            }
         }
 
         private void CreateMeshes(Vector3 center)

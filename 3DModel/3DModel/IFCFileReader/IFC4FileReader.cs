@@ -28,7 +28,7 @@ namespace _3DModel.IFCFileReader
 
                 base.ReadObjectsFromIFCFile(textReader);
 
-                ModelManager.Instance.BuildTree(base.IfcModel, base.RootItem);
+                //ModelManager.Instance.BuildTree(base.IfcModel, base.RootItem);
 
                 ModelManager.Instance.CloseCurrentModel(base.IfcModel);
             }

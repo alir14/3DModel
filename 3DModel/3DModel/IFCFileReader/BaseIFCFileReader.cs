@@ -100,7 +100,6 @@ namespace _3DModel.IFCFileReader
                     item.Mesh3d = mesh;
                     meshToIfcItems[mesh] = item;
 
-                    //FillMeshByIfcColor(item);
                     FillMeshByRandomIfcColor(item);
 
                     mesh.Tag = item.ifcType + ":" + item.ifcID;
@@ -423,31 +422,32 @@ namespace _3DModel.IFCFileReader
 
         private void FillMeshByIfcColor(IFCItem item)
         {
-            if (item.Mesh3d != null)
-            {
-                if (item.ifcTreeItem.ifcColor != null)
-                {
-                    var ifcColor = item.ifcTreeItem.ifcColor;
-                    var color = System.Windows.Media.Color.FromArgb(
-                        (byte)(255 - ifcColor.A * 255), 
-                        (byte)(ifcColor.R * 255), 
-                        (byte)(ifcColor.G * 255), 
-                        (byte)(ifcColor.B * 255));
+            //if (item.Mesh3d != null)
+            //{
+            //    if (item.ifcTreeItem.ifcColor != null)
+            //    {
+            //        //var ifcColor = item.ifcTreeItem.ifcColor;
+            //        var color = System.Windows.Media.Color.FromArgb(
+            //            (byte)(255 - ifcColor.A * 255), 
+            //            (byte)(ifcColor.R * 255), 
+            //            (byte)(ifcColor.G * 255), 
+            //            (byte)(ifcColor.B * 255));
 
-                    item.Mesh3d.Material = new PhongMaterial()
-                    {
-                        AmbientColor = System.Windows.Media.Colors.Black.ToColor4(),
-                        DiffuseColor = System.Windows.Media.Colors.Black.ToColor4(),
-                        EmissiveColor = color.ToColor4(),
-                        ReflectiveColor = System.Windows.Media.Colors.Black.ToColor4(),
-                        SpecularColor = color.ToColor4()
-                    };
-                }
-                else
-                {
-                    item.Mesh3d.Material = PhongMaterials.Bronze; 
-                }
-            }
+            //        item.Mesh3d.Material = new PhongMaterial()
+            //        {
+            //            AmbientColor = System.Windows.Media.Colors.Black.ToColor4(),
+            //            DiffuseColor = System.Windows.Media.Colors.Black.ToColor4(),
+            //            EmissiveColor = color.ToColor4(),
+            //            ReflectiveColor = System.Windows.Media.Colors.Black.ToColor4(),
+            //            SpecularColor = color.ToColor4()
+            //        };
+            //    }
+            //    else
+            //    {
+            //        item.Mesh3d.Material = PhongMaterials.Bronze; 
+            //    }
+            //}
+            item.Mesh3d.Material = PhongMaterials.Bronze;
         }
 
     }

@@ -1,19 +1,16 @@
 ﻿using System;
-using SharpDX;
 using System.IO;
+using _3DModel.IFC;
 using System.Windows;
-using Microsoft.Win32;
 using _3DModel.Entity;
-using HelixToolkit.Wpf;
+using Microsoft.Win32;
 using _3DModel.Managers;
-using System.Windows.Media;
 using System.Windows.Input;
+using System.Windows.Media;
 using _3DModel.DataComponent;
-using System.Windows.Controls;
+using HelixToolkit.Wpf.SharpDX;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
-using System.Collections.ObjectModel;
-using System.Windows.Controls.Primitives;
 
 namespace _3DModel
 {
@@ -22,57 +19,81 @@ namespace _3DModel
     /// </summary>
     public partial class MainWindow : Window
     {
-        Popup loadPopup = new Popup();
         BitmapImage selectedBitmap = null;
         List<string> lstAttachedFile = new List<string>();
-
-        public ObservableCollection<Sticker> UserStickers { get; set; }
-
-        public Sticker UserSticker { get; set; }
+        HelixToolkit.Wpf.SharpDX.Material originalItemColor;
+        IFCItem SelectedIfcItem { get; set; }
+        Point point;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            viewer.MouseUp += Viewer_MouseUp;
-
-            UserStickers = new ObservableCollection<Sticker>();
-
+            viewer.Drop += Viewer_Drop;
+            viewer.DragOver += Viewer_DragOver;
+            viewer.MouseDoubleClick += Viewer_MouseDoubleClick;
             this.DataContext = ModelManager.Instance.ViewModel;
         }
 
-        private void Viewer_MouseUp(object sender, MouseButtonEventArgs e)
+        private void Viewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left)
+            var selectedpoint = Mouse.GetPosition(viewer);
+            if (HelixToolkit.Wpf.SharpDX.ViewportExtensions.FindNearest(viewer, selectedpoint,
+                out System.Windows.Media.Media3D.Point3D point3d,
+                out System.Windows.Media.Media3D.Vector3D normal,
+                out HelixToolkit.Wpf.SharpDX.Model3D model))
             {
-                var point = Mouse.GetPosition(viewer);
-                if (HelixToolkit.Wpf.SharpDX.ViewportExtensions.FindNearest(viewer, point,
+                var mesh = (model as MeshGeometryModel3D);
+                if (mesh != null && ModelManager.Instance.IfcObject.MeshToIfcItems.ContainsKey(mesh))
+                {
+                    SelectedIfcItem = ModelManager.Instance.IfcObject.MeshToIfcItems[mesh];
+                }
+
+                BindDetail();
+            }
+        }
+
+        private void Viewer_DragOver(object sender, DragEventArgs e)
+        {
+            point = e.GetPosition(viewer);
+        }
+
+        private void Viewer_Drop(object sender, DragEventArgs e)
+        {
+            if (point != null)
+            {
+                if (ViewportExtensions.FindNearest(viewer, point,
                     out System.Windows.Media.Media3D.Point3D point3d,
                     out System.Windows.Media.Media3D.Vector3D normal,
                     out HelixToolkit.Wpf.SharpDX.Model3D model))
                 {
-                    ModelManager.Instance.OnModelSelected(model);
+                    if (model != null)
+                    {
+                        if (SelectedIfcItem != null)
+                            SelectedIfcItem.Mesh3d.Material = originalItemColor;
+
+                        var mesh = (model as MeshGeometryModel3D);
+                        if (mesh != null && ModelManager.Instance.IfcObject.MeshToIfcItems.ContainsKey(mesh))
+                        {
+                            originalItemColor = mesh.Material;
+                            mesh.Material = PhongMaterials.Chrome;
+                            SelectedIfcItem = ModelManager.Instance.IfcObject.MeshToIfcItems[mesh];
+                            this.viewer.ReAttach();
+
+                            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                            foreach (string filePath in files)
+                            {
+                                lstAttachedName.Items.Add(filePath);
+                            }
+                        }
+                    }
+
                     BindDetail();
                 }
                 else
                 {
-                    DetailSection.Visibility = Visibility.Hidden;
-
-                }
-            }
-        }
-
-        private void BtnBrows_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            ResetControl();
-
-            if(openFileDialog.ShowDialog() == true)
-            {
-                if(!string.IsNullOrEmpty(openFileDialog.FileName))
-                {
-                    LoadIFCFile(openFileDialog.FileName);
+                    SelectedIfcItem = null;
                 }
             }
         }
@@ -82,84 +103,25 @@ namespace _3DModel
 
         }
 
-        private void btnLoadPopUpClose_Click1(object sender, RoutedEventArgs e)
-        {
-            loadPopup.IsOpen = false;
-        }
-
         private void LoadIFCFile(string filePath)
         {
             ModelManager.Instance.ResetModel();
-            ModelManager.Instance.LoadModel(filePath, ElementObjectTree);
+            SelectedIfcItem = null;
+            ModelManager.Instance.LoadModel(filePath);
             ModelManager.Instance.InitModel();
             ModelManager.Instance.ZoomExtent(this.viewer);
             this.viewer.ReAttach();
-        }
-
-        private void ShowDetail()
-        {
-            if (this.UserSticker != null)
-            {
-                loadPopup.PopupAnimation = PopupAnimation.Fade;
-
-                loadPopup.Width = 200;
-                loadPopup.Height = 200;
-                loadPopup.Placement = PlacementMode.MousePoint;
-
-                Grid grid = new Grid();
-
-                TextBlock popupText = new TextBlock();
-                popupText.Text = this.UserSticker.UserMessage;
-                popupText.Background = Brushes.LightBlue;
-                popupText.Foreground = Brushes.Black;
-
-                Button btnLoadPopUpClose = new Button();
-                btnLoadPopUpClose.Width = 75;
-                btnLoadPopUpClose.Height = 23;
-                btnLoadPopUpClose.Content = "Close";
-                btnLoadPopUpClose.Click += btnLoadPopUpClose_Click1;
-
-                grid.Children.Add(popupText);
-                grid.Children.Add(btnLoadPopUpClose);
-
-                loadPopup.Child = grid;
-
-                loadPopup.IsOpen = true;
-            }
-        }
-
-        private void btnAttachFile_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-            {
-                if (!string.IsNullOrEmpty(openFileDialog.FileName))
-                {
-                    lstAttachedFile.Add(openFileDialog.FileName);
-                    lstAttachedName.ItemsSource = lstAttachedFile;
-                }
-            }
-        }
-
-        private void btnCapture_Click(object sender, RoutedEventArgs e)
-        {
-            selectedBitmap = CaptureImage(viewer, 10, 30);
-            selectedImage.Source = selectedBitmap;
         }
 
         private void BindDetail()
         {
             try
             {
-
-                DetailSection.Visibility = Visibility.Visible;
-
-                var entity = DataKeeper.Instance.ReadData(ModelManager.Instance.ModelName,
-                    ModelManager.Instance.SelectedIfcItem.globalID);
+                var entity = DataKeeper.Instance.ReadData(ModelManager.Instance.ModelName, SelectedIfcItem.globalID);
 
                 txtItemModelName.Text = ModelManager.Instance.ModelName;
-                txtItemTitle.Text = ModelManager.Instance.SelectedIfcItem.ifcType;
-                txtItemGlobalId.Text = ModelManager.Instance.SelectedIfcItem.globalID;
+                txtItemTitle.Text = SelectedIfcItem.ifcType;
+                txtItemGlobalId.Text = SelectedIfcItem.globalID;
 
                 if (entity != null)
                 {
@@ -172,8 +134,6 @@ namespace _3DModel
                     txtItemComment.Text = "";
                     selectedImage.Source = null;
                     lstAttachedFile = new List<string>();
-                    lstAttachedName.ItemsSource = null;
-
                 }
             }
             catch
@@ -182,18 +142,11 @@ namespace _3DModel
             }
         }
 
-        private BitmapImage CaptureImage(UIElement element, double scale, int quality)
+        private BitmapImage CaptureImage(UIElement element, int quality)
         {
             var result = new BitmapImage();
 
-            Brush sourceBrush = Brushes.Black;
-            double actualWidth = element.RenderSize.Width;
-            double actualHeight = element.RenderSize.Height;
-
-            double renderWidth = actualWidth * scale;
-            double renderHeight = ActualHeight * scale;
-
-            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)actualWidth, (int)actualHeight, 96, 96, PixelFormats.Pbgra32);
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)element.RenderSize.Width, (int)element.RenderSize.Height, 96, 96, PixelFormats.Pbgra32);
             renderTargetBitmap.Render(element);
             PngBitmapEncoder pngImage = new PngBitmapEncoder();
             pngImage.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
@@ -201,9 +154,7 @@ namespace _3DModel
             using (var stream = new MemoryStream())
             {
                 pngImage.Save(stream);
-
                 stream.Seek(0, SeekOrigin.Begin);
-
                 result.BeginInit();
                 result.CacheOption = BitmapCacheOption.OnLoad;
                 result.StreamSource = stream;
@@ -215,7 +166,6 @@ namespace _3DModel
 
         private void ResetControl()
         {
-            DetailSection.Visibility = Visibility.Hidden;
             selectedBitmap = null;
             selectedImage.Source = null;
             txtItemModelName.Text = "";
@@ -239,6 +189,26 @@ namespace _3DModel
             DataKeeper.Instance.Save(item);
         }
 
-        
+        private void btnCaptureImage_Click(object sender, RoutedEventArgs e)
+        {
+            selectedBitmap = CaptureImage(viewer, 80);
+            selectedImage.Source = selectedBitmap;
+        }
+
+        private void menuOpen_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "IFC files (*.ifc)|*.ifc";
+            ResetControl();
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (!string.IsNullOrEmpty(openFileDialog.FileName))
+                {
+                    ModelManager.Instance.ModelName = openFileDialog.SafeFileName;
+                    LoadIFCFile(openFileDialog.FileName);
+                }
+            }
+        }
     }
 }
