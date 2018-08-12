@@ -22,8 +22,8 @@ namespace _3DModel
         BitmapImage selectedBitmap = null;
         List<string> lstAttachedFile = new List<string>();
         HelixToolkit.Wpf.SharpDX.Material originalItemColor;
-        Point point;
         IFCItem SelectedIfcItem { get; set; }
+        Point point;
 
         public MainWindow()
         {
@@ -60,6 +60,7 @@ namespace _3DModel
                             originalItemColor = mesh.Material;
                             mesh.Material = PhongMaterials.Chrome;
                             SelectedIfcItem = ModelManager.Instance.IfcObject.MeshToIfcItems[mesh];
+                            this.viewer.ReAttach();
 
                             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
@@ -83,7 +84,7 @@ namespace _3DModel
         private void BtnBrows_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-
+            openFileDialog.Filter = "IFC files (*.ifc)|*.ifc";
             ResetControl();
 
             if(openFileDialog.ShowDialog() == true)
@@ -195,5 +196,6 @@ namespace _3DModel
             selectedBitmap = CaptureImage(viewer, 80);
             selectedImage.Source = selectedBitmap;
         }
+
     }
 }
