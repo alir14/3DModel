@@ -31,8 +31,26 @@ namespace _3DModel
 
             viewer.Drop += Viewer_Drop;
             viewer.DragOver += Viewer_DragOver;
-
+            viewer.MouseDoubleClick += Viewer_MouseDoubleClick;
             this.DataContext = ModelManager.Instance.ViewModel;
+        }
+
+        private void Viewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var selectedpoint = Mouse.GetPosition(viewer);
+            if (HelixToolkit.Wpf.SharpDX.ViewportExtensions.FindNearest(viewer, selectedpoint,
+                out System.Windows.Media.Media3D.Point3D point3d,
+                out System.Windows.Media.Media3D.Vector3D normal,
+                out HelixToolkit.Wpf.SharpDX.Model3D model))
+            {
+                var mesh = (model as MeshGeometryModel3D);
+                if (mesh != null && ModelManager.Instance.IfcObject.MeshToIfcItems.ContainsKey(mesh))
+                {
+                    SelectedIfcItem = ModelManager.Instance.IfcObject.MeshToIfcItems[mesh];
+                }
+
+                BindDetail();
+            }
         }
 
         private void Viewer_DragOver(object sender, DragEventArgs e)
@@ -91,6 +109,7 @@ namespace _3DModel
             {
                 if(!string.IsNullOrEmpty(openFileDialog.FileName))
                 {
+                    ModelManager.Instance.ModelName = openFileDialog.SafeFileName;
                     LoadIFCFile(openFileDialog.FileName);
                 }
             }
