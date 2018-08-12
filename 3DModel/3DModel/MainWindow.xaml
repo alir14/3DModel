@@ -48,14 +48,13 @@
                     VerticalAlignment="Top" Margin="5,50,0,0" Orientation="Vertical">
 
             <Button Width="210" Name="btnSave" Content="Save Comment" Click="btnSave_Click"></Button>
+            <Button Width="210" Name="btnCaptureImage" Content="Capture Image" Click="btnCaptureImage_Click" ></Button>
             <TextBlock Width="210" Name="txtItemModelName"></TextBlock>
             <TextBlock Width="210" Name="txtItemTitle"></TextBlock>
             <TextBlock Width="210" Name="txtItemGlobalId"></TextBlock>
             <TextBox Width="210" Name="txtItemComment" Height="150" ></TextBox>
-            <Button Width="210" Name="btnCapture" Content="Capture Image" Click="btnCapture_Click"></Button>
             <Image Width="210" Name="selectedImage" Height="200"/>
-            <Button Width="210" Name="btnAttachFile" Content="Attach" Click="btnAttachFile_Click"></Button>
-            <ListView Width="210" Name="lstAttachedName"></ListView>
+            <ListView Width="210" Name="lstAttachedName" Height="200"></ListView>
 
         </StackPanel>
         <StatusBar Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom">

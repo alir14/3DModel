@@ -19,9 +19,7 @@ namespace _3DModel.Managers
         bool makeModelCentered = true;
         readonly IfcEngine ifcEngine = new IfcEngine();
         MainViewModel viewModel = new MainViewModel();
-        HelixToolkit.Wpf.SharpDX.Material originalItemColor;
         
-        IFCItem HoverIfcItem { get; set; }
         Vector3 Max
         {
             get { return new Vector3(maxCorner[0], maxCorner[1], maxCorner[2]) - Center; }
@@ -36,7 +34,6 @@ namespace _3DModel.Managers
             { return makeModelCentered ? Vector3.Zero : new Vector3(minCorner[0] + maxCorner[0], minCorner[1] + maxCorner[1], minCorner[2] + maxCorner[2]) * 0.5f; }
         }
 
-        public IFCItem SelectedIfcItem { get; set; }
         public IfcEngine IFCEngine
         {
             get
@@ -117,8 +114,6 @@ namespace _3DModel.Managers
 
             viewModel.Model = new Element3DCollection();
 
-            HoverIfcItem = null;
-            SelectedIfcItem = null;
             minCorner = new float[3] { float.MaxValue, float.MaxValue, float.MaxValue };
             maxCorner = new float[3] { float.MinValue, float.MinValue, float.MinValue };
         }
@@ -176,44 +171,6 @@ namespace _3DModel.Managers
         public void CloseCurrentModel(IntPtr model)
         {
             this.ifcEngine.CloseModel(model);
-        }
-
-        public void OnModelHovered(HelixToolkit.Wpf.SharpDX.Model3D model)
-        {
-            if (this.HoverIfcItem != null)
-            {
-                HoverIfcItem.Mesh3d.Material = PhongMaterials.Silver;
-                HoverIfcItem = null;
-            }
-            if (model != null)
-            {
-                var mesh = (model as MeshGeometryModel3D);
-                if (mesh != null && this.IfcObject.MeshToIfcItems.ContainsKey(mesh))
-                {
-                    mesh.Material = PhongMaterials.Violet;
-                    HoverIfcItem = this.IfcObject.MeshToIfcItems[mesh];
-                }
-            }
-        }
-
-        public void OnModelSelected(HelixToolkit.Wpf.SharpDX.Model3D model)
-        {
-            if (SelectedIfcItem != null)
-            {
-                SelectedIfcItem.Mesh3d.Material = originalItemColor;
-                SelectedIfcItem = null;
-            }
-
-            if (model != null)
-            {
-                var mesh = (model as MeshGeometryModel3D);
-                if (mesh != null && this.IfcObject.MeshToIfcItems.ContainsKey(mesh))
-                {
-                    originalItemColor = mesh.Material;
-                    mesh.Material = PhongMaterials.Chrome;
-                    SelectedIfcItem = this.IfcObject.MeshToIfcItems[mesh];
-                }
-            }
         }
 
         private void CreateMeshes(Vector3 center)
