@@ -43,10 +43,10 @@
 
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Name="menuOpen" Header="_File" Click="menuOpen_Click">
-                <MenuItem Header="_Open" />
+            <MenuItem Header="_File" >
+                <MenuItem Name="menuOpen" Header="_Open" Click="menuOpen_Click" />
                 <Separator />
-                <MenuItem Header="_Exit" />
+                <MenuItem Name="menuExit" Header="_Exit" Click="menuExit_Click"  />
             </MenuItem>
             <MenuItem Name="menuSave" Header="_Save" Click="menuSave_Click" />
             <MenuItem Name="menuCaptureIamge" Header="_Capture Screen" Click="menuCaptureIamge_Click" />

@@ -273,5 +273,10 @@ namespace _3DModel
                 }
             }
         }
+
+        private void menuExit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
