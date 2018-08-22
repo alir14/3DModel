@@ -97,6 +97,7 @@
     <Compile Include="DataComponent\DataKeeper.cs" />
     <Compile Include="Entity\ModelEntity.cs" />
     <Compile Include="IFC\IFCTreeData.cs" />
+    <Compile Include="ViewModel\AttachmentModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="IFCFileReader\BaseIFCFileReader.cs" />
@@ -157,9 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="image\CaptureImage.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="image\Save.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Content Include="sharpdx_direct3d11_1_effects_arm.dll">

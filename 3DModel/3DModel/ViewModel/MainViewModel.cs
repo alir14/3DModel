@@ -1,6 +1,8 @@
 ﻿using System;
 using SharpDX;
+using System.Windows.Controls;
 using HelixToolkit.Wpf.SharpDX;
+using System.Collections.Generic;
 using System.Windows.Media.Media3D;
 
 namespace _3DModel.ViewModel
@@ -8,6 +10,7 @@ namespace _3DModel.ViewModel
     public class MainViewModel:BaseViewModel
     {
         Element3DCollection model;
+        List<AttachmentModel> imageList = new List<AttachmentModel>();
 
         //public HelixToolkit.Wpf.SharpDX.MeshGeometry3D Sphere { get; private set; }
         public Transform3D Light1Transform { get; private set; }
@@ -34,6 +37,12 @@ namespace _3DModel.ViewModel
         public bool RenderLight2 { get; set; }
         public bool RenderLight3 { get; set; }
         public bool RenderLight4 { get; set; }
+        public List<AttachmentModel> AttachmentList
+        {
+            get { return imageList; }
+            set { imageList = value; }
+        }
+
 
         public MainViewModel()
         {

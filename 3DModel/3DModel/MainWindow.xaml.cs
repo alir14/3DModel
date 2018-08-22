@@ -11,6 +11,7 @@ using _3DModel.DataComponent;
 using HelixToolkit.Wpf.SharpDX;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
+using _3DModel.ViewModel;
 
 namespace _3DModel
 {
@@ -20,9 +21,9 @@ namespace _3DModel
     public partial class MainWindow : Window
     {
         BitmapImage selectedBitmap = null;
-        List<string> lstAttachedFile = new List<string>();
         HelixToolkit.Wpf.SharpDX.Material originalItemColor;
         IFCItem SelectedIfcItem { get; set; }
+
         Point point;
 
         public MainWindow()
@@ -49,7 +50,18 @@ namespace _3DModel
                     SelectedIfcItem = ModelManager.Instance.IfcObject.MeshToIfcItems[mesh];
                 }
 
-                BindDetail();
+                var entity = DataKeeper.Instance.ReadData(ModelManager.Instance.ModelName, SelectedIfcItem.globalID);
+
+                if (entity != null)
+                {
+                    txtItemModelName.Text = entity.ModelName;
+                    txtItemGlobalId.Text = entity.SelectedItemId;
+                    txtItemComment.Text = entity.SelectedItemComment;
+                    selectedImage.Source = entity.CapturedImage;
+                    ModelManager.Instance.ViewModel.AttachmentList = entity.AttachedFile;
+                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.AttachmentList;
+                }
+
             }
         }
 
@@ -82,9 +94,9 @@ namespace _3DModel
 
                             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-                            foreach (string filePath in files)
+                            foreach (string file in files)
                             {
-                                lstAttachedName.Items.Add(filePath);
+                                AttachFile(file);
                             }
                         }
                     }
@@ -98,9 +110,26 @@ namespace _3DModel
             }
         }
 
-        private void BtnClose_Click (object sender, RoutedEventArgs e)
+        private void AttachFile(string file)
         {
+            var selectedFile = file.Split('.');
+            try
+            {
+                var destinationPath = Path.Combine(Environment.CurrentDirectory, "Attachments",
+                    $"{Guid.NewGuid().ToString()}.{selectedFile[1]}");
+                File.Copy(file, destinationPath);
 
+                //System.Windows.Controls.Image img = new System.Windows.Controls.Image
+                //{
+                //    Source = new BitmapImage(new Uri(destinationPath)),
+                //    Width = Height = 100
+                //};
+                ModelManager.Instance.ViewModel.AttachmentList.Add(new AttachmentModel() { Address = destinationPath});
+            }
+            catch
+            {
+                MessageBox.Show("Unable to save the selected file");
+            }
         }
 
         private void LoadIFCFile(string filePath)
@@ -117,24 +146,13 @@ namespace _3DModel
         {
             try
             {
-                var entity = DataKeeper.Instance.ReadData(ModelManager.Instance.ModelName, SelectedIfcItem.globalID);
-
                 txtItemModelName.Text = ModelManager.Instance.ModelName;
                 txtItemTitle.Text = SelectedIfcItem.ifcType;
                 txtItemGlobalId.Text = SelectedIfcItem.globalID;
+                txtItemComment.Text = "";
+                selectedImage.Source = null;
+                lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.AttachmentList;
 
-                if (entity != null)
-                {
-                    txtItemComment.Text = entity.SelectedItemComment;
-                    selectedImage.Source = entity.CapturedImage;
-                    lstAttachedName.ItemsSource = entity.AttachedFileNames;
-                }
-                else
-                {
-                    txtItemComment.Text = "";
-                    selectedImage.Source = null;
-                    lstAttachedFile = new List<string>();
-                }
             }
             catch
             {
@@ -175,18 +193,7 @@ namespace _3DModel
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            var item = new ModelEntity()
-            {
-                Id = Guid.NewGuid(),
-                CapturedImage = selectedBitmap,
-                SelectedItemComment = txtItemComment.Text,
-                SelectedItemId = txtItemGlobalId.Text,
-                ModelName = txtItemModelName.Text,
-                SelectedItemTitle = txtItemTitle.Text,
-                AttachedFileNames = lstAttachedFile
-            };
-
-            DataKeeper.Instance.Save(item);
+            
         }
 
         private void btnCaptureImage_Click(object sender, RoutedEventArgs e)
@@ -209,6 +216,22 @@ namespace _3DModel
                     LoadIFCFile(openFileDialog.FileName);
                 }
             }
+        }
+
+        private void menuSave_Click(object sender, RoutedEventArgs e)
+        {
+            var item = new ModelEntity()
+            {
+                Id = Guid.NewGuid(),
+                CapturedImage = selectedBitmap,
+                SelectedItemComment = txtItemComment.Text,
+                SelectedItemId = txtItemGlobalId.Text,
+                ModelName = txtItemModelName.Text,
+                SelectedItemTitle = txtItemTitle.Text,
+                AttachedFile = ModelManager.Instance.ViewModel.AttachmentList
+            };
+
+            DataKeeper.Instance.Save(item);
         }
     }
 }
