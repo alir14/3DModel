@@ -34,6 +34,7 @@ namespace _3DModel
             viewer.DragOver += Viewer_DragOver;
             viewer.MouseDoubleClick += Viewer_MouseDoubleClick;
             this.DataContext = ModelManager.Instance.ViewModel;
+            
         }
 
         private void Viewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -58,8 +59,8 @@ namespace _3DModel
                     txtItemGlobalId.Text = entity.SelectedItemId;
                     txtItemComment.Text = entity.SelectedItemComment;
                     selectedImage.Source = entity.CapturedImage;
-                    ModelManager.Instance.ViewModel.AttachmentList = entity.AttachedFile;
-                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.AttachmentList;
+                    ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile = entity.AttachedFile;
+                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
                 }
 
             }
@@ -119,12 +120,7 @@ namespace _3DModel
                     $"{Guid.NewGuid().ToString()}.{selectedFile[1]}");
                 File.Copy(file, destinationPath);
 
-                //System.Windows.Controls.Image img = new System.Windows.Controls.Image
-                //{
-                //    Source = new BitmapImage(new Uri(destinationPath)),
-                //    Width = Height = 100
-                //};
-                ModelManager.Instance.ViewModel.AttachmentList.Add(new AttachmentModel() { Address = destinationPath});
+                ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.Add(new AttachmentModel() { Address = destinationPath});
             }
             catch
             {
@@ -151,8 +147,8 @@ namespace _3DModel
                 txtItemGlobalId.Text = SelectedIfcItem.globalID;
                 txtItemComment.Text = "";
                 selectedImage.Source = null;
-                lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.AttachmentList;
-
+                lstcontrolAttachment.ItemsSource = null;
+                lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
             }
             catch
             {
@@ -196,12 +192,6 @@ namespace _3DModel
             
         }
 
-        private void btnCaptureImage_Click(object sender, RoutedEventArgs e)
-        {
-            selectedBitmap = CaptureImage(viewer, 80);
-            selectedImage.Source = selectedBitmap;
-        }
-
         private void menuOpen_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -228,10 +218,16 @@ namespace _3DModel
                 SelectedItemId = txtItemGlobalId.Text,
                 ModelName = txtItemModelName.Text,
                 SelectedItemTitle = txtItemTitle.Text,
-                AttachedFile = ModelManager.Instance.ViewModel.AttachmentList
+                AttachedFile = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile
             };
-
+            ModelManager.Instance.ViewModel.ScreenModelEntity = item;
             DataKeeper.Instance.Save(item);
+        }
+
+        private void menuCaptureIamge_Click(object sender, RoutedEventArgs e)
+        {
+            selectedBitmap = CaptureImage(viewer, 80);
+            selectedImage.Source = selectedBitmap;
         }
     }
 }

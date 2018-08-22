@@ -10,10 +10,7 @@ namespace _3DModel.Entity
 {
     public class ModelEntity
     {
-        public ModelEntity()
-        {
-
-        }
+        List<AttachmentModel> attachedFile = new List<AttachmentModel>();
 
         public Guid Id { get; set; }
 
@@ -29,6 +26,10 @@ namespace _3DModel.Entity
 
         public BitmapImage CapturedImage { get; set; }
 
-        public List<AttachmentModel> AttachedFile{ get; set; }
+        public List<AttachmentModel> AttachedFile
+        {
+            get { return attachedFile; }
+            set { attachedFile = value; }
+        }
     }
 }
