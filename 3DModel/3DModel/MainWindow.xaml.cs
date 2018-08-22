@@ -1,17 +1,18 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using _3DModel.IFC;
 using System.Windows;
 using _3DModel.Entity;
 using Microsoft.Win32;
 using _3DModel.Managers;
+using _3DModel.ViewModel;
 using System.Windows.Input;
 using System.Windows.Media;
 using _3DModel.DataComponent;
 using HelixToolkit.Wpf.SharpDX;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
-using _3DModel.ViewModel;
 
 namespace _3DModel
 {
@@ -23,7 +24,6 @@ namespace _3DModel
         BitmapImage selectedBitmap = null;
         HelixToolkit.Wpf.SharpDX.Material originalItemColor;
         IFCItem SelectedIfcItem { get; set; }
-
         Point point;
 
         public MainWindow()
@@ -34,7 +34,21 @@ namespace _3DModel
             viewer.DragOver += Viewer_DragOver;
             viewer.MouseDoubleClick += Viewer_MouseDoubleClick;
             this.DataContext = ModelManager.Instance.ViewModel;
-            
+            lstcontrolAttachment.SelectionChanged += LstcontrolAttachment_SelectionChanged;
+        }
+
+        private void LstcontrolAttachment_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            try
+            {
+                var item = (AttachmentModel)lstcontrolAttachment.SelectedItem;
+                if(item != null)
+                    txtImageName.Text = item.Name;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void Viewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -118,9 +132,13 @@ namespace _3DModel
             {
                 var destinationPath = Path.Combine(Environment.CurrentDirectory, "Attachments",
                     $"{Guid.NewGuid().ToString()}.{selectedFile[1]}");
-                File.Copy(file, destinationPath);
+                File.Copy(file, destinationPath, true);
+                File.SetAttributes(destinationPath, FileAttributes.Normal);
 
-                ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.Add(new AttachmentModel() { Address = destinationPath});
+                ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.Add(new AttachmentModel() {
+                    Address = destinationPath,
+                    Name = destinationPath.Replace(Path.Combine(Environment.CurrentDirectory, "Attachments"),"").Replace("\\","")
+                });
             }
             catch
             {
@@ -152,7 +170,6 @@ namespace _3DModel
             }
             catch
             {
-
             }
         }
 
@@ -228,6 +245,33 @@ namespace _3DModel
         {
             selectedBitmap = CaptureImage(viewer, 80);
             selectedImage.Source = selectedBitmap;
+        }
+
+        private void RemoveAttachment_Click(object sender, RoutedEventArgs e)
+        {
+            if(!string.IsNullOrEmpty(txtImageName.Name))
+            {
+                var selectedItem = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.First(x => x.Name == txtImageName.Text);
+                if(selectedItem != null)
+                {
+                    ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.Remove(selectedItem);
+
+                    lstcontrolAttachment.ItemsSource = null;
+                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
+                    lstcontrolAttachment.SelectedIndex = -1;
+
+                    if (File.Exists(selectedItem.Address))
+                    {
+                        try
+                        {
+                            File.Delete(selectedItem.Address);
+                        }
+                        catch
+                        {
+                        }
+                    }
+                }
+            }
         }
     }
 }

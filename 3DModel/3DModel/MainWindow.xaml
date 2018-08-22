@@ -116,19 +116,23 @@
                     <TextBlock Width="Auto" Name="txtItemGlobalId" Margin="0,5,0,0"></TextBlock>
                     <TextBlock >Comment:</TextBlock>
                     <TextBox HorizontalAlignment="Stretch" Name="txtItemComment" Height="120" Margin="0,5,0,0"></TextBox>
-                    <ListView Name="lstcontrolAttachment" Margin="0,5,0,0" >
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Orientation="Horizontal" Width="210"/>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Image Source="{Binding Address}" Width="70" Height="70" />
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-
+                    <StackPanel Margin="0,5,0,0">
+                        <Button Name="RemoveAttachment" Click="RemoveAttachment_Click" Content="Remove Attachment" />
+                        <ListView Name="lstcontrolAttachment" >
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" Width="210"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding Address}" Width="70" Height="70" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <TextBlock Width="Auto" Name="txtImageName" />
+                    </StackPanel>
+                    
                     <Image Name="selectedImage" Height="200" HorizontalAlignment="Stretch" Margin="0,5,0,0"/>
                     
 
