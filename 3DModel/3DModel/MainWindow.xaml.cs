@@ -59,6 +59,9 @@ namespace _3DModel
                 out System.Windows.Media.Media3D.Vector3D normal,
                 out HelixToolkit.Wpf.SharpDX.Model3D model))
             {
+                if (SelectedIfcItem != null && originalItemColor!= null)
+                    SelectedIfcItem.Mesh3d.Material = originalItemColor;
+
                 var mesh = (model as MeshGeometryModel3D);
                 if (mesh != null && ModelManager.Instance.IfcObject.MeshToIfcItems.ContainsKey(mesh))
                 {
@@ -74,6 +77,7 @@ namespace _3DModel
                     txtItemComment.Text = entity.SelectedItemComment;
                     selectedImage.Source = entity.CapturedImage;
                     ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile = entity.AttachedFile;
+                    lstcontrolAttachment.ItemsSource = null;
                     lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
                 }
 
@@ -168,8 +172,9 @@ namespace _3DModel
                 lstcontrolAttachment.ItemsSource = null;
                 lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
         }
 
