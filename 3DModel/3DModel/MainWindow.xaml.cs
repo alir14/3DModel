@@ -241,12 +241,6 @@ namespace _3DModel
             DataKeeper.Instance.Save(item);
         }
 
-        private void menuCaptureIamge_Click(object sender, RoutedEventArgs e)
-        {
-            selectedBitmap = CaptureImage(viewer, 80);
-            selectedImage.Source = selectedBitmap;
-        }
-
         private void RemoveAttachment_Click(object sender, RoutedEventArgs e)
         {
             if(!string.IsNullOrEmpty(txtImageName.Name))
@@ -277,6 +271,12 @@ namespace _3DModel
         private void menuExit_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void captureImage_Click(object sender, RoutedEventArgs e)
+        {
+            selectedBitmap = CaptureImage(viewer, 80);
+            selectedImage.Source = selectedBitmap;
         }
     }
 }
