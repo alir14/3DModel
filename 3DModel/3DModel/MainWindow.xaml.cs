@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using _3DModel.IFC;
 using System.Windows;
 using _3DModel.Entity;
 using Microsoft.Win32;
 using _3DModel.Managers;
+using _3DModel.ViewModel;
 using System.Windows.Input;
 using System.Windows.Media;
 using _3DModel.DataComponent;
@@ -20,7 +22,6 @@ namespace _3DModel
     public partial class MainWindow : Window
     {
         BitmapImage selectedBitmap = null;
-        List<string> lstAttachedFile = new List<string>();
         HelixToolkit.Wpf.SharpDX.Material originalItemColor;
         IFCItem SelectedIfcItem { get; set; }
         Point point;
@@ -33,6 +34,21 @@ namespace _3DModel
             viewer.DragOver += Viewer_DragOver;
             viewer.MouseDoubleClick += Viewer_MouseDoubleClick;
             this.DataContext = ModelManager.Instance.ViewModel;
+            lstcontrolAttachment.SelectionChanged += LstcontrolAttachment_SelectionChanged;
+        }
+
+        private void LstcontrolAttachment_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            try
+            {
+                var item = (AttachmentModel)lstcontrolAttachment.SelectedItem;
+                if(item != null)
+                    txtImageName.Text = item.Name;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void Viewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -49,7 +65,18 @@ namespace _3DModel
                     SelectedIfcItem = ModelManager.Instance.IfcObject.MeshToIfcItems[mesh];
                 }
 
-                BindDetail();
+                var entity = DataKeeper.Instance.ReadData(ModelManager.Instance.ModelName, SelectedIfcItem.globalID);
+
+                if (entity != null)
+                {
+                    txtItemModelName.Text = entity.ModelName;
+                    txtItemGlobalId.Text = entity.SelectedItemId;
+                    txtItemComment.Text = entity.SelectedItemComment;
+                    selectedImage.Source = entity.CapturedImage;
+                    ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile = entity.AttachedFile;
+                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
+                }
+
             }
         }
 
@@ -82,9 +109,9 @@ namespace _3DModel
 
                             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-                            foreach (string filePath in files)
+                            foreach (string file in files)
                             {
-                                lstAttachedName.Items.Add(filePath);
+                                AttachFile(file);
                             }
                         }
                     }
@@ -98,9 +125,25 @@ namespace _3DModel
             }
         }
 
-        private void BtnClose_Click (object sender, RoutedEventArgs e)
+        private void AttachFile(string file)
         {
+            var selectedFile = file.Split('.');
+            try
+            {
+                var destinationPath = Path.Combine(Environment.CurrentDirectory, "Attachments",
+                    $"{Guid.NewGuid().ToString()}.{selectedFile[1]}");
+                File.Copy(file, destinationPath, true);
+                File.SetAttributes(destinationPath, FileAttributes.Normal);
 
+                ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.Add(new AttachmentModel() {
+                    Address = destinationPath,
+                    Name = destinationPath.Replace(Path.Combine(Environment.CurrentDirectory, "Attachments"),"").Replace("\\","")
+                });
+            }
+            catch
+            {
+                MessageBox.Show("Unable to save the selected file");
+            }
         }
 
         private void LoadIFCFile(string filePath)
@@ -117,28 +160,16 @@ namespace _3DModel
         {
             try
             {
-                var entity = DataKeeper.Instance.ReadData(ModelManager.Instance.ModelName, SelectedIfcItem.globalID);
-
                 txtItemModelName.Text = ModelManager.Instance.ModelName;
                 txtItemTitle.Text = SelectedIfcItem.ifcType;
                 txtItemGlobalId.Text = SelectedIfcItem.globalID;
-
-                if (entity != null)
-                {
-                    txtItemComment.Text = entity.SelectedItemComment;
-                    selectedImage.Source = entity.CapturedImage;
-                    lstAttachedName.ItemsSource = entity.AttachedFileNames;
-                }
-                else
-                {
-                    txtItemComment.Text = "";
-                    selectedImage.Source = null;
-                    lstAttachedFile = new List<string>();
-                }
+                txtItemComment.Text = "";
+                selectedImage.Source = null;
+                lstcontrolAttachment.ItemsSource = null;
+                lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
             }
             catch
             {
-
             }
         }
 
@@ -175,24 +206,7 @@ namespace _3DModel
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            var item = new ModelEntity()
-            {
-                Id = Guid.NewGuid(),
-                CapturedImage = selectedBitmap,
-                SelectedItemComment = txtItemComment.Text,
-                SelectedItemId = txtItemGlobalId.Text,
-                ModelName = txtItemModelName.Text,
-                SelectedItemTitle = txtItemTitle.Text,
-                AttachedFileNames = lstAttachedFile
-            };
-
-            DataKeeper.Instance.Save(item);
-        }
-
-        private void btnCaptureImage_Click(object sender, RoutedEventArgs e)
-        {
-            selectedBitmap = CaptureImage(viewer, 80);
-            selectedImage.Source = selectedBitmap;
+            
         }
 
         private void menuOpen_Click(object sender, RoutedEventArgs e)
@@ -209,6 +223,60 @@ namespace _3DModel
                     LoadIFCFile(openFileDialog.FileName);
                 }
             }
+        }
+
+        private void menuSave_Click(object sender, RoutedEventArgs e)
+        {
+            var item = new ModelEntity()
+            {
+                Id = Guid.NewGuid(),
+                CapturedImage = selectedBitmap,
+                SelectedItemComment = txtItemComment.Text,
+                SelectedItemId = txtItemGlobalId.Text,
+                ModelName = txtItemModelName.Text,
+                SelectedItemTitle = txtItemTitle.Text,
+                AttachedFile = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile
+            };
+            ModelManager.Instance.ViewModel.ScreenModelEntity = item;
+            DataKeeper.Instance.Save(item);
+        }
+
+        private void menuCaptureIamge_Click(object sender, RoutedEventArgs e)
+        {
+            selectedBitmap = CaptureImage(viewer, 80);
+            selectedImage.Source = selectedBitmap;
+        }
+
+        private void RemoveAttachment_Click(object sender, RoutedEventArgs e)
+        {
+            if(!string.IsNullOrEmpty(txtImageName.Name))
+            {
+                var selectedItem = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.First(x => x.Name == txtImageName.Text);
+                if(selectedItem != null)
+                {
+                    ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.Remove(selectedItem);
+
+                    lstcontrolAttachment.ItemsSource = null;
+                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
+                    lstcontrolAttachment.SelectedIndex = -1;
+
+                    if (File.Exists(selectedItem.Address))
+                    {
+                        try
+                        {
+                            File.Delete(selectedItem.Address);
+                        }
+                        catch
+                        {
+                        }
+                    }
+                }
+            }
+        }
+
+        private void menuExit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

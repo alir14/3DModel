@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _3DModel.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,7 @@ namespace _3DModel.Entity
 {
     public class ModelEntity
     {
-        public ModelEntity()
-        {
-            this.AttachedFileNames = new List<string>();
-        }
+        List<AttachmentModel> attachedFile = new List<AttachmentModel>();
 
         public Guid Id { get; set; }
 
@@ -28,6 +26,10 @@ namespace _3DModel.Entity
 
         public BitmapImage CapturedImage { get; set; }
 
-        public List<string> AttachedFileNames { get; set; }
+        public List<AttachmentModel> AttachedFile
+        {
+            get { return attachedFile; }
+            set { attachedFile = value; }
+        }
     }
 }

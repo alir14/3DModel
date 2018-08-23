@@ -43,13 +43,14 @@
 
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Name="menuOpen" Header="_File" Click="menuOpen_Click">
-                <!--<MenuItem Header="_New" />-->
-                <MenuItem Header="_Open" />
-                <!--<MenuItem Header="_Save" />-->
+            <MenuItem Header="_File" >
+                <MenuItem Name="menuOpen" Header="_Open" Click="menuOpen_Click" />
                 <Separator />
-                <MenuItem Header="_Exit" />
+                <MenuItem Name="menuExit" Header="_Exit" Click="menuExit_Click"  />
             </MenuItem>
+            <MenuItem Name="menuSave" Header="_Save" Click="menuSave_Click" />
+            <MenuItem Name="menuCaptureIamge" Header="_Capture Screen" Click="menuCaptureIamge_Click" />
+
         </Menu>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -107,32 +108,31 @@
 
             <Border BorderThickness="2" BorderBrush="DarkGray" DockPanel.Dock="Left" >
                 <StackPanel Name="DetailSection" VerticalAlignment="Top"  Orientation="Vertical">
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <Button Name="btnSave" Click="btnSave_Click" Height="35" Width="50">
-                            <Button.Content>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="image/Save.jpg" Width="20" Height="20"  />
-                                </StackPanel>
-                            </Button.Content>
-                        </Button>
-                    <Button Name="btnCaptureImage" Click="btnCaptureImage_Click" Height="35" Width="50">
-                            <Button.Content>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="image/CaptureImage.jpg" Width="20" Height="20" />
-                                </StackPanel>
-                            </Button.Content>
-                        </Button>
-                </StackPanel>
                     <TextBlock >Model Name:</TextBlock>
                     <TextBlock Name="txtItemModelName" Margin="0,5,0,0"></TextBlock>
                     <TextBlock >Title:</TextBlock>
                     <TextBlock Width="Auto" Name="txtItemTitle" Margin="0,5,0,0"></TextBlock>
                     <TextBlock >Id:</TextBlock>
                     <TextBlock Width="Auto" Name="txtItemGlobalId" Margin="0,5,0,0"></TextBlock>
-
-                    <TextBox HorizontalAlignment="Stretch" Name="txtItemComment" Height="150" Margin="0,5,0,0"></TextBox>
-
-                    <ListView Name="lstAttachedName" Height="200" HorizontalAlignment="Stretch" Margin="0,5,0,0"></ListView>
+                    <TextBlock >Comment:</TextBlock>
+                    <TextBox HorizontalAlignment="Stretch" Name="txtItemComment" Height="120" Margin="0,5,0,0"></TextBox>
+                    <StackPanel Margin="0,5,0,0">
+                        <Button Name="RemoveAttachment" Click="RemoveAttachment_Click" Content="Remove Attachment" />
+                        <ListView Name="lstcontrolAttachment" >
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" Width="210"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding Address}" Width="70" Height="70" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <TextBlock Width="Auto" Name="txtImageName" />
+                    </StackPanel>
+                    
                     <Image Name="selectedImage" Height="200" HorizontalAlignment="Stretch" Margin="0,5,0,0"/>
                     
 
