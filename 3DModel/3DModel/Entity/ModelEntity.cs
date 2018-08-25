@@ -10,6 +10,11 @@ namespace _3DModel.Entity
 {
     public class ModelEntity
     {
+        public ModelEntity()
+        {
+            AttachedFile = new List<AttachmentModel>();
+        }
+
         List<AttachmentModel> attachedFile = new List<AttachmentModel>();
 
         public Guid Id { get; set; }

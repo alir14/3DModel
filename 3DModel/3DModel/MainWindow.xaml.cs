@@ -111,6 +111,18 @@ namespace _3DModel
                             SelectedIfcItem = ModelManager.Instance.IfcObject.MeshToIfcItems[mesh];
                             this.viewer.ReAttach();
 
+                            txtItemModelName.Text = ModelManager.Instance.ModelName;
+                            txtItemTitle.Text = SelectedIfcItem.ifcType;
+
+                            if (SelectedIfcItem.globalID != txtItemGlobalId.Text)
+                            {
+                                txtItemComment.Text = "";
+                                selectedImage.Source = null;
+                                txtItemGlobalId.Text = SelectedIfcItem.globalID;
+
+                                ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile = new List<AttachmentModel>();
+                            }
+
                             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
                             foreach (string file in files)
@@ -119,8 +131,6 @@ namespace _3DModel
                             }
                         }
                     }
-
-                    BindDetail();
                 }
                 else
                 {
@@ -143,6 +153,9 @@ namespace _3DModel
                     Address = destinationPath,
                     Name = destinationPath.Replace(Path.Combine(Environment.CurrentDirectory, "Attachments"),"").Replace("\\","")
                 });
+
+                lstcontrolAttachment.ItemsSource = null;
+                lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
             }
             catch
             {
@@ -158,24 +171,6 @@ namespace _3DModel
             ModelManager.Instance.InitModel();
             ModelManager.Instance.ZoomExtent(this.viewer);
             this.viewer.ReAttach();
-        }
-
-        private void BindDetail()
-        {
-            try
-            {
-                txtItemModelName.Text = ModelManager.Instance.ModelName;
-                txtItemTitle.Text = SelectedIfcItem.ifcType;
-                txtItemGlobalId.Text = SelectedIfcItem.globalID;
-                txtItemComment.Text = "";
-                selectedImage.Source = null;
-                lstcontrolAttachment.ItemsSource = null;
-                lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
         }
 
         private BitmapImage CaptureImage(UIElement element, int quality)
@@ -209,11 +204,6 @@ namespace _3DModel
             txtItemGlobalId.Text = "";
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
         private void menuOpen_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -240,9 +230,9 @@ namespace _3DModel
                 SelectedItemId = txtItemGlobalId.Text,
                 ModelName = txtItemModelName.Text,
                 SelectedItemTitle = txtItemTitle.Text,
-                AttachedFile = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile
             };
-            ModelManager.Instance.ViewModel.ScreenModelEntity = item;
+            item.AttachedFile.AddRange(ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile);
+
             DataKeeper.Instance.Save(item);
         }
 
