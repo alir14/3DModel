@@ -95,7 +95,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataComponent\DataKeeper.cs" />
-    <Compile Include="Entity\ModelEntity.cs" />
     <Compile Include="IFC\IFCTreeData.cs" />
     <Compile Include="ViewModel\AttachmentModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
@@ -106,6 +105,7 @@
     <Compile Include="IFC\IFCItem.cs" />
     <Compile Include="IFC\IFCItemColor.cs" />
     <Compile Include="IFC\IFCTreeItem.cs" />
+    <Compile Include="ViewModel\DetailModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="Managers\ModelManager.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />

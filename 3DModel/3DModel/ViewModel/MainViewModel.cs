@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using HelixToolkit.Wpf.SharpDX;
 using System.Collections.Generic;
 using System.Windows.Media.Media3D;
-using _3DModel.Entity;
 
 namespace _3DModel.ViewModel
 {
@@ -37,14 +36,6 @@ namespace _3DModel.ViewModel
         public bool RenderLight2 { get; set; }
         public bool RenderLight3 { get; set; }
         public bool RenderLight4 { get; set; }
-
-        //3DModelInfo 
-        ModelEntity screenModelEntity = new ModelEntity();
-        public ModelEntity ScreenModelEntity
-        {
-            get { return screenModelEntity; }
-            set { screenModelEntity = value; }
-        }
 
         public MainViewModel()
         {

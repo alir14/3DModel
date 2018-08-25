@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using _3DModel.IFC;
 using System.Windows;
-using _3DModel.Entity;
 using Microsoft.Win32;
 using _3DModel.Managers;
 using _3DModel.ViewModel;
@@ -76,9 +75,9 @@ namespace _3DModel
                     txtItemGlobalId.Text = entity.SelectedItemId;
                     txtItemComment.Text = entity.SelectedItemComment;
                     selectedImage.Source = entity.CapturedImage;
-                    ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile = entity.AttachedFile;
+                    ModelManager.Instance.ScreenModelEntity.AttachedFile = entity.AttachedFile;
                     lstcontrolAttachment.ItemsSource = null;
-                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
+                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ScreenModelEntity.AttachedFile;
                 }
 
             }
@@ -120,7 +119,7 @@ namespace _3DModel
                                 selectedImage.Source = null;
                                 txtItemGlobalId.Text = SelectedIfcItem.globalID;
 
-                                ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile = new List<AttachmentModel>();
+                                ModelManager.Instance.ScreenModelEntity.AttachedFile = new List<AttachmentModel>();
                             }
 
                             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -149,13 +148,13 @@ namespace _3DModel
                 File.Copy(file, destinationPath, true);
                 File.SetAttributes(destinationPath, FileAttributes.Normal);
 
-                ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.Add(new AttachmentModel() {
+                ModelManager.Instance.ScreenModelEntity.AttachedFile.Add(new AttachmentModel() {
                     Address = destinationPath,
                     Name = destinationPath.Replace(Path.Combine(Environment.CurrentDirectory, "Attachments"),"").Replace("\\","")
                 });
 
                 lstcontrolAttachment.ItemsSource = null;
-                lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
+                lstcontrolAttachment.ItemsSource = ModelManager.Instance.ScreenModelEntity.AttachedFile;
             }
             catch
             {
@@ -222,7 +221,7 @@ namespace _3DModel
 
         private void menuSave_Click(object sender, RoutedEventArgs e)
         {
-            var item = new ModelEntity()
+            var item = new DetailModel()
             {
                 Id = Guid.NewGuid(),
                 CapturedImage = selectedBitmap,
@@ -231,7 +230,7 @@ namespace _3DModel
                 ModelName = txtItemModelName.Text,
                 SelectedItemTitle = txtItemTitle.Text,
             };
-            item.AttachedFile.AddRange(ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile);
+            item.AttachedFile.AddRange(ModelManager.Instance.ScreenModelEntity.AttachedFile);
 
             DataKeeper.Instance.Save(item);
         }
@@ -240,13 +239,13 @@ namespace _3DModel
         {
             if(!string.IsNullOrEmpty(txtImageName.Name))
             {
-                var selectedItem = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.First(x => x.Name == txtImageName.Text);
+                var selectedItem = ModelManager.Instance.ScreenModelEntity.AttachedFile.First(x => x.Name == txtImageName.Text);
                 if(selectedItem != null)
                 {
-                    ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile.Remove(selectedItem);
+                    ModelManager.Instance.ScreenModelEntity.AttachedFile.Remove(selectedItem);
 
                     lstcontrolAttachment.ItemsSource = null;
-                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ViewModel.ScreenModelEntity.AttachedFile;
+                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ScreenModelEntity.AttachedFile;
                     lstcontrolAttachment.SelectedIndex = -1;
 
                     if (File.Exists(selectedItem.Address))

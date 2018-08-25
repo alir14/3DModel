@@ -1,20 +1,14 @@
-﻿using _3DModel.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace _3DModel.Entity
+namespace _3DModel.ViewModel
 {
-    public class ModelEntity
+    public class DetailModel
     {
-        public ModelEntity()
-        {
-            AttachedFile = new List<AttachmentModel>();
-        }
-
         List<AttachmentModel> attachedFile = new List<AttachmentModel>();
 
         public Guid Id { get; set; }

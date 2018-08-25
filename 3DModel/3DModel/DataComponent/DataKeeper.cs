@@ -1,9 +1,9 @@
-﻿using _3DModel.Entity;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Text;
+using _3DModel.ViewModel;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace _3DModel.DataComponent
 {
@@ -35,22 +35,22 @@ namespace _3DModel.DataComponent
             }
         }
 
-        List<ModelEntity> dataBase = new List<ModelEntity>();
+        List<DetailModel> dataBase = new List<DetailModel>();
 
-        public List<ModelEntity> DataBase
+        public List<DetailModel> DataBase
         {
             get { return dataBase; }
         }
 
 
-        public void Save(ModelEntity comment)
+        public void Save(DetailModel comment)
         {
             this.dataBase.Add(comment);
         }
 
-        public ModelEntity ReadData(string modelName, string itemId)
+        public DetailModel ReadData(string modelName, string itemId)
         {
-            return this.dataBase.FirstOrDefault<ModelEntity>(x => x.ModelName == modelName && x.SelectedItemId == itemId);
+            return this.dataBase.FirstOrDefault<DetailModel>(x => x.ModelName == modelName && x.SelectedItemId == itemId);
         }
     }
 }

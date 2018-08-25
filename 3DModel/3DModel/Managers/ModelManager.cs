@@ -19,7 +19,9 @@ namespace _3DModel.Managers
         bool makeModelCentered = true;
         readonly IfcEngine ifcEngine = new IfcEngine();
         MainViewModel viewModel = new MainViewModel();
-        
+        //3DModelInfo 
+        DetailModel screenModelEntity = new DetailModel();
+
         Vector3 Max
         {
             get { return new Vector3(maxCorner[0], maxCorner[1], maxCorner[2]) - Center; }
@@ -58,7 +60,15 @@ namespace _3DModel.Managers
             get { return viewModel; }
             set { viewModel = value; }
         }
+
         public string ModelName { get; set; }
+
+
+        public DetailModel ScreenModelEntity
+        {
+            get { return screenModelEntity; }
+            set { screenModelEntity = value; }
+        }
 
         #region singltone
 
