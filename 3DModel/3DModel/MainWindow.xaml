@@ -105,19 +105,19 @@
                 </StatusBarItem>
             </StatusBar>
 
-            <Border BorderThickness="2" BorderBrush="DarkGray" DockPanel.Dock="Left" >
+            <Border Name="Infosection" BorderThickness="2" BorderBrush="DarkGray" DockPanel.Dock="Left" >
                 <StackPanel Name="DetailSection" VerticalAlignment="Top"  Orientation="Vertical">
                     <TextBlock >Model Name:</TextBlock>
-                    <TextBlock Name="txtItemModelName" Margin="0,5,0,0"></TextBlock>
+                    <TextBlock Name="txtItemModelName" Margin="0,5,0,0" Text="{Binding ModelName}" />
                     <TextBlock >Title:</TextBlock>
-                    <TextBlock Width="Auto" Name="txtItemTitle" Margin="0,5,0,0"></TextBlock>
+                    <TextBlock Width="Auto" Name="txtItemTitle" Margin="0,5,0,0" Text="{Binding SelectedItemTitle}" />
                     <TextBlock >Id:</TextBlock>
-                    <TextBlock Width="Auto" Name="txtItemGlobalId" Margin="0,5,0,0"></TextBlock>
+                    <TextBlock Width="Auto" Name="txtItemGlobalId" Margin="0,5,0,0" Text="{Binding SelectedItemId}"  />
                     <TextBlock >Comment:</TextBlock>
-                    <TextBox HorizontalAlignment="Stretch" Name="txtItemComment" Height="120" Margin="0,5,0,0"></TextBox>
+                    <TextBox HorizontalAlignment="Stretch" Name="txtItemComment" Height="120" Margin="0,5,0,0" Text="{Binding SelectedItemComment, Mode=TwoWay}"  />
                     <StackPanel Margin="0,5,0,0">
                         <Button Name="RemoveAttachment" Click="RemoveAttachment_Click" Content="Remove Attachment" />
-                        <ListView Name="lstcontrolAttachment" >
+                        <ListView Name="lstcontrolAttachment" ItemsSource="{Binding AttachedFile,Mode=TwoWay}" >
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel Orientation="Horizontal" Width="210"/>
@@ -133,7 +133,7 @@
                     </StackPanel>
                     <Button Name="captureImage" Click="captureImage_Click" Content="Capture Image" Margin="0,5,0,0"/>
 
-                    <Image Name="selectedImage" Height="200" HorizontalAlignment="Stretch" Margin="0,5,0,0"/>
+                    <Image Name="selectedImage" Source="{Binding CapturedImage, Mode=TwoWay}" Height="200" HorizontalAlignment="Stretch" Margin="0,5,0,0"/>
                     
 
             </StackPanel>

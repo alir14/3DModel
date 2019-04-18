@@ -20,10 +20,17 @@ namespace _3DModel
     /// </summary>
     public partial class MainWindow : Window
     {
-        BitmapImage selectedBitmap = null;
+        //BitmapImage selectedBitmap = null;
         HelixToolkit.Wpf.SharpDX.Material originalItemColor;
         IFCItem SelectedIfcItem { get; set; }
         Point point;
+        DetailModel screenModelEntity = new DetailModel();
+
+        public DetailModel ScreenModelEntity
+        {
+            get { return screenModelEntity; }
+            set { screenModelEntity = value; }
+        }
 
         public MainWindow()
         {
@@ -32,8 +39,16 @@ namespace _3DModel
             viewer.Drop += Viewer_Drop;
             viewer.DragOver += Viewer_DragOver;
             viewer.MouseDoubleClick += Viewer_MouseDoubleClick;
+            ScreenModelEntity.PropertyChanged += ScreenModelEntity_PropertyChanged;
             this.DataContext = ModelManager.Instance.ViewModel;
+            Infosection.DataContext = ScreenModelEntity; 
+
             lstcontrolAttachment.SelectionChanged += LstcontrolAttachment_SelectionChanged;
+        }
+
+        private void ScreenModelEntity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Infosection.DataContext = ScreenModelEntity;
         }
 
         private void LstcontrolAttachment_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -67,19 +82,7 @@ namespace _3DModel
                     SelectedIfcItem = ModelManager.Instance.IfcObject.MeshToIfcItems[mesh];
                 }
 
-                var entity = DataKeeper.Instance.ReadData(ModelManager.Instance.ModelName, SelectedIfcItem.globalID);
-
-                if (entity != null)
-                {
-                    txtItemModelName.Text = entity.ModelName;
-                    txtItemGlobalId.Text = entity.SelectedItemId;
-                    txtItemComment.Text = entity.SelectedItemComment;
-                    selectedImage.Source = entity.CapturedImage;
-                    ModelManager.Instance.ScreenModelEntity.AttachedFile = entity.AttachedFile;
-                    lstcontrolAttachment.ItemsSource = null;
-                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ScreenModelEntity.AttachedFile;
-                }
-
+                ScreenModelEntity = DataKeeper.Instance.ReadData(ModelManager.Instance.ModelName, SelectedIfcItem.globalID);
             }
         }
 
@@ -110,17 +113,14 @@ namespace _3DModel
                             SelectedIfcItem = ModelManager.Instance.IfcObject.MeshToIfcItems[mesh];
                             this.viewer.ReAttach();
 
-                            txtItemModelName.Text = ModelManager.Instance.ModelName;
-                            txtItemTitle.Text = SelectedIfcItem.ifcType;
-
-                            if (SelectedIfcItem.globalID != txtItemGlobalId.Text)
+                            if(SelectedIfcItem.globalID != ScreenModelEntity.SelectedItemId)
                             {
-                                txtItemComment.Text = "";
-                                selectedImage.Source = null;
-                                txtItemGlobalId.Text = SelectedIfcItem.globalID;
-
-                                ModelManager.Instance.ScreenModelEntity.AttachedFile = new List<AttachmentModel>();
+                                ScreenModelEntity = new DetailModel();
                             }
+
+                            ScreenModelEntity.ModelName = ModelManager.Instance.ModelName;
+                            ScreenModelEntity.SelectedItemTitle = SelectedIfcItem.ifcType;
+
 
                             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
@@ -148,13 +148,10 @@ namespace _3DModel
                 File.Copy(file, destinationPath, true);
                 File.SetAttributes(destinationPath, FileAttributes.Normal);
 
-                ModelManager.Instance.ScreenModelEntity.AttachedFile.Add(new AttachmentModel() {
+                ScreenModelEntity.AttachedFile.Add(new AttachmentModel() {
                     Address = destinationPath,
                     Name = destinationPath.Replace(Path.Combine(Environment.CurrentDirectory, "Attachments"),"").Replace("\\","")
                 });
-
-                lstcontrolAttachment.ItemsSource = null;
-                lstcontrolAttachment.ItemsSource = ModelManager.Instance.ScreenModelEntity.AttachedFile;
             }
             catch
             {
@@ -196,11 +193,7 @@ namespace _3DModel
 
         private void ResetControl()
         {
-            selectedBitmap = null;
-            selectedImage.Source = null;
-            txtItemModelName.Text = "";
-            txtItemTitle.Text = "";
-            txtItemGlobalId.Text = "";
+            ScreenModelEntity = new DetailModel();
         }
 
         private void menuOpen_Click(object sender, RoutedEventArgs e)
@@ -221,31 +214,20 @@ namespace _3DModel
 
         private void menuSave_Click(object sender, RoutedEventArgs e)
         {
-            var item = new DetailModel()
-            {
-                Id = Guid.NewGuid(),
-                CapturedImage = selectedBitmap,
-                SelectedItemComment = txtItemComment.Text,
-                SelectedItemId = txtItemGlobalId.Text,
-                ModelName = txtItemModelName.Text,
-                SelectedItemTitle = txtItemTitle.Text,
-            };
-            item.AttachedFile.AddRange(ModelManager.Instance.ScreenModelEntity.AttachedFile);
-
-            DataKeeper.Instance.Save(item);
+            DataKeeper.Instance.Save(ScreenModelEntity);
         }
 
         private void RemoveAttachment_Click(object sender, RoutedEventArgs e)
         {
             if(!string.IsNullOrEmpty(txtImageName.Name))
             {
-                var selectedItem = ModelManager.Instance.ScreenModelEntity.AttachedFile.First(x => x.Name == txtImageName.Text);
+                var selectedItem = ScreenModelEntity.AttachedFile.First(x => x.Name == txtImageName.Text);
                 if(selectedItem != null)
                 {
-                    ModelManager.Instance.ScreenModelEntity.AttachedFile.Remove(selectedItem);
+                    ScreenModelEntity.AttachedFile.Remove(selectedItem);
 
                     lstcontrolAttachment.ItemsSource = null;
-                    lstcontrolAttachment.ItemsSource = ModelManager.Instance.ScreenModelEntity.AttachedFile;
+                    lstcontrolAttachment.ItemsSource = ScreenModelEntity.AttachedFile;
                     lstcontrolAttachment.SelectedIndex = -1;
 
                     if (File.Exists(selectedItem.Address))
@@ -269,8 +251,7 @@ namespace _3DModel
 
         private void captureImage_Click(object sender, RoutedEventArgs e)
         {
-            selectedBitmap = CaptureImage(viewer, 80);
-            selectedImage.Source = selectedBitmap;
+            ScreenModelEntity.CapturedImage = CaptureImage(viewer, 80);
         }
     }
 }

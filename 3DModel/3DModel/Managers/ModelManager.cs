@@ -20,7 +20,6 @@ namespace _3DModel.Managers
         readonly IfcEngine ifcEngine = new IfcEngine();
         MainViewModel viewModel = new MainViewModel();
         //3DModelInfo 
-        DetailModel screenModelEntity = new DetailModel();
 
         Vector3 Max
         {
@@ -64,11 +63,7 @@ namespace _3DModel.Managers
         public string ModelName { get; set; }
 
 
-        public DetailModel ScreenModelEntity
-        {
-            get { return screenModelEntity; }
-            set { screenModelEntity = value; }
-        }
+
 
         #region singltone
 
